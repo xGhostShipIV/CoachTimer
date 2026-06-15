@@ -1,9 +1,10 @@
 import { Asset } from "expo-asset";
 import { AudioSource, useAudioPlayer } from "expo-audio";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 export const NOTIFICATION_URLS = [
     require("../../assets/sounds/four_double_beep.mp3"),
+    require("../../assets/sounds/three-bell.mp3")
 ];
 
 const soundMap: Record<string, AudioSource> = {};
@@ -15,28 +16,37 @@ export function getSoundNames(): string[] {
 export function useSoundManager() {
     const [currentSound, setCurrentSound] = useState<string>("");
     const [currentAsset, setCurrentAsset] = useState<AudioSource>(null);
+    const [playCount, setPlayCount] = useState(0);
 
-    NOTIFICATION_URLS.forEach((url, index) => {
-        const asset = Asset.fromModule(url);
-        const soundName = asset.name.replace(/\.[^/.]+$/, "");
-        soundMap[soundName] = url;
-    });
+    useEffect(() => {
+        NOTIFICATION_URLS.forEach((url) => {
+            const asset = Asset.fromModule(url);
+            const soundName = asset.name.replace(/\.[^/.]+$/, "");
+            soundMap[soundName] = url;
+        });
+    }, []);
     
     const player = useAudioPlayer(currentAsset);
 
     useEffect(() => {
-        if (currentAsset) {
-            console.log("Playing asset:", currentAsset);
-            player.seekTo(0);
-            player.play();
+        if (!currentSound) {
+            return;
         }
-    }, [currentAsset]);
 
-    // when currentSound changes we play the sound
+        setCurrentAsset(soundMap[currentSound] ?? null);
+    }, [currentSound, playCount]);
+
     useEffect(() => {
-        setCurrentAsset(soundMap[currentSound]);
-        console.log("Current sound changed:", currentSound);
-    }, [currentSound]);
+        if (!currentAsset) {
+            return;
+        }
 
-    return setCurrentSound;
+        player.seekTo(0);
+        player.play();
+    }, [currentAsset, playCount]);
+
+    return useCallback((soundName: string) => {
+        setCurrentSound(soundName);
+        setPlayCount((count) => count + 1);
+    }, []);
 }
