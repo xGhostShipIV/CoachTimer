@@ -38,11 +38,27 @@
             "backgroundColor": "#000000"
           }
         }
-      ]
+      ],
+      [
+        "expo-asset",
+        {
+          "assets": [
+            "./assets/sounds"
+          ]
+        }
+      ],
+      "expo-audio"
     ],
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
-    }
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "aef9c650-ba72-4a3e-bfa8-1c960820d7ec"
+      }
+    },
+    "owner": "nathansenter0323"
   }
 }

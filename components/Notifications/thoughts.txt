@@ -1,0 +1,28 @@
+Maybe I want my NotificationManager to be a top
+level thing. Like it exists on our landing page
+and gets passed around.
+
+Basically, an empty (invisible) component?
+
+I want to limit re-renders.
+
+So I don't want our main time stamp to be at the
+top level. It has to exist deeper.
+
+But I also need this main timestamp to make the
+notifications work. So how can I connect them?
+
+If I pass my manager into each sub timer - which ios
+responsible for its own timestamp. Maybe the
+sub timer can interact with the notifications.
+
+Maybe I am just way over thinking this.
+
+Top level is something that loads all of our
+sounds. We can pass that down and have it play sounds...
+probably.
+
+Or does the notification just handle all that itself?
+
+Apparently assets are managed and cached, so they shouldnt
+reload.
