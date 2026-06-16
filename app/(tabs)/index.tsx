@@ -6,7 +6,7 @@ import ParallaxScrollView from '@/components/parallax-scroll-view';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 
-import { TimeKeeper } from '@/components/Timer/time-keeper';
+import IntervalView from '@/components/Views/IntervalRoundTimer/interval-view';
 import { useEffect, useReducer, useRef } from 'react';
 
 export function useAnimationFrame() {
@@ -47,7 +47,7 @@ export default function HomeScreen() {
         <ThemedText type="title">Welcome!</ThemedText>
         <HelloWave />
       </ThemedView>
-      <TimeKeeper />
+      <IntervalView />
     </ParallaxScrollView>
   );
 }

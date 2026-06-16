@@ -1,3 +1,4 @@
+import { formatTimestamp } from "@/utils/time-utils";
 import { useEffect, useRef, useState } from "react";
 import { ThemedText } from "../themed-text";
 import { styles } from "./time-keeper-styles";
@@ -11,27 +12,8 @@ interface TimeTextProps {
     onTick?: (frameDelta: number) => void;
     /** Use this value to reset the timer from the parent. */
     resetSignal?: number;
-}
-
-const MS_IN_SECOND = 1000;
-const MS_IN_MINUTE = 60 * MS_IN_SECOND;
-const MS_IN_HOUR = 60 * MS_IN_MINUTE;
-
-function pad(value: number, length: number) {
-    return String(value).padStart(length, '0');
-}
-
-function formatTimestamp(timestamp: number, showMilliseconds: boolean) {
-    const hours = Math.floor(timestamp / MS_IN_HOUR);
-    const minutes = Math.floor((timestamp % MS_IN_HOUR) / MS_IN_MINUTE);
-    const seconds = Math.floor((timestamp % MS_IN_MINUTE) / MS_IN_SECOND);
-    const milliseconds = timestamp % MS_IN_SECOND;
-
-    const timeString = `${pad(hours, 2)}:${pad(minutes, 2)}:${pad(seconds, 2)}`;
-
-    return showMilliseconds
-        ? `${timeString}:${pad(Math.floor(milliseconds / 10), 2)}`
-        : timeString;
+    /** Optional countdown start time in milliseconds. */
+    countdownFrom?: number;
 }
 
 export function TimeText({
@@ -39,13 +21,26 @@ export function TimeText({
     isPaused,
     onTick,
     resetSignal = 0,
+    countdownFrom,
 }: TimeTextProps) {
-    const [elapsedTime, setElapsedTime] = useState(0);
+    const [elapsedTime, setElapsedTime] = useState(countdownFrom ?? 0);
     const accumulatedRef = useRef(0);
     const startRef = useRef<number | null>(null);
     const previousFrameRef = useRef<number | null>(null);
     const frameIdRef = useRef<number | null>(null);
     const previousResetRef = useRef(resetSignal);
+    const previousCountdownFromRef = useRef(countdownFrom);
+
+    const getCurrentTime = (now: number) => {
+        const runningOffset = startRef.current !== null ? now - startRef.current : 0;
+        const totalElapsed = accumulatedRef.current + runningOffset;
+
+        if (countdownFrom === undefined) {
+            return totalElapsed;
+        }
+
+        return Math.max(0, countdownFrom - totalElapsed);
+    };
 
     useEffect(() => {
         if (isPaused) {
@@ -63,7 +58,7 @@ export function TimeText({
         const tick = () => {
             const now = Date.now();
             const frameDelta = previousFrameRef.current ? now - previousFrameRef.current : 0;
-            const nextElapsed = accumulatedRef.current + (now - (startRef.current ?? now));
+            const nextElapsed = getCurrentTime(now);
 
             previousFrameRef.current = now;
             setElapsedTime(nextElapsed);
@@ -86,14 +81,15 @@ export function TimeText({
 
             previousFrameRef.current = null;
         };
-    }, [isPaused, onTick]);
+    }, [isPaused, onTick, countdownFrom]);
 
     useEffect(() => {
-        if (resetSignal === previousResetRef.current) {
+        if (resetSignal === previousResetRef.current && countdownFrom === previousCountdownFromRef.current) {
             return;
         }
 
         previousResetRef.current = resetSignal;
+        previousCountdownFromRef.current = countdownFrom;
 
         if (frameIdRef.current !== null) {
             cancelAnimationFrame(frameIdRef.current);
@@ -103,9 +99,9 @@ export function TimeText({
         accumulatedRef.current = 0;
         startRef.current = null;
         previousFrameRef.current = null;
-        setElapsedTime(0);
+        setElapsedTime(countdownFrom ?? 0);
         onTick?.(0);
-    }, [resetSignal, onTick]);
+    }, [resetSignal, countdownFrom, onTick]);
 
     return (
         <ThemedText style={styles.timerText}>

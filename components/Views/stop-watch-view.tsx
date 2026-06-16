@@ -3,13 +3,13 @@ import { Pressable } from "react-native";
 import NotificationContainer from "../Notifications/notification-container";
 import { ThemedText } from "../themed-text";
 import { ThemedView } from "../themed-view";
-import { styles } from "./time-keeper-styles";
-import { TimeText } from "./time-text";
+import { styles } from "../Timer/time-keeper-styles";
+import { TimeText } from "../Timer/time-text";
 
 // Now I can create and edit notifications.
 // How can I connect my elapsed time, to the execution of our notifications?
 
-export function TimeKeeper() {
+export function StopwatchView() {
     const [isPaused, setIsPaused] = useState(true);
     const [resetSignal, setResetSignal] = useState(0);
     const notificationTickRef = useRef<(delta: number) => void>(() => {});
