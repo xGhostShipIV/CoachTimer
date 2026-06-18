@@ -1,11 +1,7 @@
+import { NOTIFICATION_URLS } from "@/constants/asset-constants";
 import { Asset } from "expo-asset";
 import { AudioSource, useAudioPlayer } from "expo-audio";
 import { useCallback, useEffect, useState } from "react";
-
-export const NOTIFICATION_URLS = [
-    require("../../assets/sounds/four_double_beep.mp3"),
-    require("../../assets/sounds/three-bell.mp3")
-];
 
 const soundMap: Record<string, AudioSource> = {};
 

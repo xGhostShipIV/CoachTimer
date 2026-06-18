@@ -1,7 +1,9 @@
+import { DEFAULT_CONFIG } from "@/constants/data-constants";
+import { TimeConfiguration } from "@/data/data-types";
 import React, { useState } from "react";
 import { ThemedView } from "../../themed-view";
 import IntervalActiveTimer from "./interval-active-view";
-import IntervalSetupView, { DEFAULT_CONFIG, TimeConfiguration } from "./interval-setup-view";
+import IntervalSetupView from "./interval-setup-view";
 
 export default function IntervalView() {
     const [configuration, setConfiguration] = useState<TimeConfiguration>(DEFAULT_CONFIG);

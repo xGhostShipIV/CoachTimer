@@ -1,14 +1,9 @@
-﻿import React from "react";
+﻿import { IntervalData } from "@/data/data-types";
+import React from "react";
 import { Text, TextInput, TouchableOpacity, View } from "react-native";
 import { styles } from "../Notifications/notification-styles";
 import { ThemedText } from "../themed-text";
 import { ThemedView } from "../themed-view";
-
-export interface IntervalData {
-    on: number;
-    off: number;
-    repeats: number;
-}
 
 interface IntervalItemProps {
     index: number;

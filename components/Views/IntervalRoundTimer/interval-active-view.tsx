@@ -1,9 +1,10 @@
+import { useSoundManager } from "@/components/Notifications/sound-manager";
+import { TimeConfiguration } from "@/data/data-types";
 import { formatTimestamp } from "@/utils/time-utils";
 import React, { useEffect, useRef, useState } from "react";
 import { Pressable, StyleSheet } from "react-native";
 import { ThemedText } from "../../themed-text";
 import { ThemedView } from "../../themed-view";
-import { TimeConfiguration } from "./interval-setup-view";
 
 interface ActiveTimerProps {
     data: TimeConfiguration;
@@ -26,15 +27,30 @@ export default function IntervalActiveTimer({ data, onFinish, onStop }: ActiveTi
     const repRef = useRef(1);
     const remainingRef = useRef(0);
 
-    const { intervals, numRounds, roundRest } = data;
+    const { intervals, numRounds, roundRest, soundConfiguration } = data;
     const currentInterval = intervals[intervalIndexRef.current];
+
+    const soundManager = useSoundManager();
+    const warningPlayedRef = useRef(false);
+    const roundEndPlayedRef = useRef(false);
+
+    const playSound = (soundName?: string) => {
+        if (soundName) {
+            soundManager(soundName);
+        }
+    };
 
     const setStageAndRemaining = (nextStage: Stage) => {
         setStage(nextStage);
+        warningPlayedRef.current = false;
 
         if (nextStage === "finished") {
             remainingRef.current = 0;
             setDisplayMs(0);
+            if (!roundEndPlayedRef.current) {
+                playSound(soundConfiguration?.roundEndSfx);
+                roundEndPlayedRef.current = true;
+            }
             return;
         }
 
@@ -45,6 +61,17 @@ export default function IntervalActiveTimer({ data, onFinish, onStop }: ActiveTi
 
         remainingRef.current = nextDuration;
         setDisplayMs(nextDuration);
+
+        const isRoundStart = nextStage === "on" && intervalIndexRef.current === 0 && repRef.current === 1;
+        if (isRoundStart) {
+            playSound(soundConfiguration?.roundStartSfx);
+            roundEndPlayedRef.current = false;
+        }
+
+        if (nextStage === "roundRest" && !roundEndPlayedRef.current) {
+            playSound(soundConfiguration?.roundEndSfx);
+            roundEndPlayedRef.current = true;
+        }
     };
 
     const initializeTimer = () => {
@@ -58,9 +85,7 @@ export default function IntervalActiveTimer({ data, onFinish, onStop }: ActiveTi
             return;
         }
 
-        remainingRef.current = intervals[0].on * 1000;
-        setDisplayMs(remainingRef.current);
-        setStage("on");
+        setStageAndRemaining("on");
     };
 
     const advanceStage = () => {
@@ -137,6 +162,19 @@ export default function IntervalActiveTimer({ data, onFinish, onStop }: ActiveTi
 
             remainingRef.current = Math.max(0, remainingRef.current - delta);
             setDisplayMs(remainingRef.current);
+
+            const warningMs = stage === "roundRest"
+                ? soundConfiguration?.restEndWarningMs
+                : soundConfiguration?.roundEndWarningMs;
+
+            if (
+                warningMs != null &&
+                !warningPlayedRef.current &&
+                remainingRef.current <= warningMs
+            ) {
+                playSound(soundConfiguration?.roundEndWarningSfx);
+                warningPlayedRef.current = true;
+            }
 
             if (remainingRef.current <= 0) {
                 advanceStage();

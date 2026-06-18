@@ -1,50 +1,15 @@
+import { styles } from "@/components/Timer/time-keeper-styles";
+import { DEFAULT_CONFIG } from "@/constants/data-constants";
+import { TimeConfiguration } from "@/data/data-types";
+import mainStyles from "@/styles/main-styles";
 import { formatTimestamp } from "@/utils/time-utils";
 import { useEffect, useState } from "react";
 import { Pressable } from "react-native";
-import IntervalContainer, { IntervalData } from "../../Intervals/interval";
+import IntervalContainer from "../../Intervals/interval";
 import RoundOptions from "../../Intervals/round-options";
+import SoundOptionsContainer from "../../options/sound-options-container";
 import { ThemedText } from "../../themed-text";
 import { ThemedView } from "../../themed-view";
-import { styles } from "../../Timer/time-keeper-styles";
-
-// Configuration struct for setting up a timer
-// TODO: Move into own file
-export interface TimeConfiguration {
-    // How many times do we repeat our intervals?
-    numRounds: number;
-    // How long do we rest between rounds?
-    roundRest: number;
-    // Sounds.
-
-    // This could probably go in its own file.
-    soundConfiguration?: {
-        // Which sound do we play on round start?
-        roundStartSfx?: string;
-        // Which sound do we play on round end?
-        roundEndSfx?: string;
-        // Which sound do we play on round warning?
-        roundEndWarningSfx?: string;
-        // How much time in round remaining before we play it?
-        roundEndWarningMs?: number;
-        // How much remaining rest time before we play it?
-        restEndWarningMs?: number;
-    }
-
-    // Interval definitions
-    intervals: IntervalData[];
-}
-
-export const DEFAULT_CONFIG: TimeConfiguration = {
-    intervals: [
-        {
-            on: 60,
-            off: 30,
-            repeats: 1
-        }
-    ],
-    numRounds: 3,
-    roundRest: 30
-};
 
 function totalMilliseconds(configuration: TimeConfiguration): number {
     return configuration.intervals.reduce(
@@ -74,7 +39,7 @@ export default function IntervalSetupView({ initialConfiguration, onStart, onCon
     }, [initialConfiguration]);
 
     return (
-        <ThemedView style={styles.container} >
+        <ThemedView style={mainStyles.container} >
             <RoundOptions
                 numRounds={configuration.numRounds}
                 onRoundsChanged={(value: number) => {
@@ -89,7 +54,15 @@ export default function IntervalSetupView({ initialConfiguration, onStart, onCon
                     onConfigurationChange?.(next);
                 }}
             />
-
+            <SoundOptionsContainer
+                options={configuration.soundConfiguration ?? {}}
+                onChange={(next) => {
+                    const nextConfig = { ...configuration, soundConfiguration: next };
+                    setConfiguration(nextConfig);
+                    onConfigurationChange?.(nextConfig);
+                }}
+            />
+            
             <IntervalContainer
                 data={configuration.intervals}
                 onChange={(next) => {
