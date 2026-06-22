@@ -1,7 +1,7 @@
+import { BackButton } from "@/components/timer-action-buttons";
 import mainStyles from "@/styles/main-styles";
 import { useCallback, useRef, useState } from "react";
 import { Pressable } from "react-native";
-import { BackButton } from "../back-button";
 import NotificationContainer from "../Notifications/notification-container";
 import { ThemedText } from "../themed-text";
 import { ThemedView } from "../themed-view";

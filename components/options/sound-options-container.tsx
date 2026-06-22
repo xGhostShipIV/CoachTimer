@@ -13,12 +13,13 @@ const SFX_OPTIONS = [NONE_OPTION, ...sfxNames];
 interface SoundOptionsProps {
 	options: SoundOptions;
 	onChange: (next: SoundOptions) => void;
+	title?: string;
 }
 
-export default function SoundOptionsContainer({ options, onChange }: SoundOptionsProps) {
+export default function SoundOptionsContainer({ options, onChange, title = 'Sound Options' }: SoundOptionsProps) {
     return (
         <Collapsible
-            title='Sound Options'
+            title={title}
             children={useSoundOptions({options, onChange})}>
         </Collapsible>
 	);

@@ -34,13 +34,6 @@ function IntervalItem({ index, data, onRemove, onUpdate }: IntervalItemProps) {
         });
     };
 
-    const updateSoundConfiguration = (next: SoundOptions) => {
-        onUpdate(index, {
-            ...data,
-            soundConfiguration: next,
-        });
-    };
-
     return (
         <ThemedView style={styles.container}>
             <ThemedView style={styles.row}>
@@ -92,11 +85,6 @@ function IntervalItem({ index, data, onRemove, onUpdate }: IntervalItemProps) {
                     <Text style={{ color: "white", fontSize: 18, fontWeight: "bold" }}>×</Text>
                 </TouchableOpacity>
             </ThemedView>
-
-            <SoundOptionsContainer
-                options={data.soundConfiguration ?? {}}
-                onChange={updateSoundConfiguration}
-            />
         </ThemedView>
     );
 }
@@ -109,10 +97,17 @@ interface IntervalContainerProps {
 }
 
 export default function IntervalContainer({ data, onChange }: IntervalContainerProps) {
+    // Sound config is shared across every interval rather than set per-item,
+    // so it's read from (and written to) all of them uniformly.
+    const sharedSoundConfiguration = data[0]?.soundConfiguration ?? {};
+
     const handleAddInterval = () => {
         const defaultSeconds = parseInt(DEFAULT_INTERVAL_SECONDS, 10);
         const defaultMs = defaultSeconds * 1000;
-        const nextIntervals = [...data, { on: defaultMs, off: defaultMs, repeats: 1 }];
+        const nextIntervals = [
+            ...data,
+            { on: defaultMs, off: defaultMs, repeats: 1, soundConfiguration: sharedSoundConfiguration },
+        ];
         onChange?.(nextIntervals);
     };
 
@@ -128,8 +123,19 @@ export default function IntervalContainer({ data, onChange }: IntervalContainerP
         onChange?.(nextIntervals);
     };
 
+    const handleSharedSoundConfigurationChange = (next: SoundOptions) => {
+        const nextIntervals = data.map((item) => ({ ...item, soundConfiguration: next }));
+        onChange?.(nextIntervals);
+    };
+
     return (
         <View style={[styles.container, styles.emptyContainer]}>
+            <SoundOptionsContainer
+                title="Interval Sound Options"
+                options={sharedSoundConfiguration}
+                onChange={handleSharedSoundConfigurationChange}
+            />
+
             {data.map((interval, index) => (
                 <IntervalItem
                     key={index}

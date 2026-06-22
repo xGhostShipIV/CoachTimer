@@ -1,10 +1,36 @@
 import { TimeConfiguration } from "@/data/data-types";
 import { listSavedConfigurations, saveConfiguration, SavedConfiguration } from "@/utils/configuration-storage";
 import { ComponentProps, PropsWithChildren, useState } from "react";
-import { KeyboardAvoidingView, Modal, Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
+import { KeyboardAvoidingView, Modal, Platform, Pressable, ScrollView, StyleProp, StyleSheet, Text, TextInput, View, ViewStyle } from "react-native";
 import { IconSymbol } from "./ui/icon-symbol";
 
 type IconName = ComponentProps<typeof IconSymbol>["name"];
+
+interface IconButtonProps {
+    icon: IconName;
+    onPress?: () => void;
+    size?: number;
+    style?: StyleProp<ViewStyle>;
+}
+
+// Small circular translucent icon button. The shared visual atom behind
+// BackButton and the trigger for each FloatingPromptButton below.
+function IconButton({ icon, onPress, size = 18, style }: IconButtonProps) {
+    return (
+        <Pressable style={[styles.button, style]} onPress={onPress} hitSlop={8}>
+            <IconSymbol name={icon} size={size} color="#FFFFFF" />
+        </Pressable>
+    );
+}
+
+interface BackButtonProps {
+    onPress?: () => void;
+    style?: StyleProp<ViewStyle>;
+}
+
+export function BackButton({ onPress, style }: BackButtonProps) {
+    return <IconButton icon="chevron.left" size={20} onPress={onPress} style={style} />;
+}
 
 interface FloatingPromptButtonProps extends PropsWithChildren {
     icon: IconName;
@@ -21,9 +47,7 @@ interface FloatingPromptButtonProps extends PropsWithChildren {
 function FloatingPromptButton({ icon, title, visible, onPress, onRequestClose, children }: FloatingPromptButtonProps) {
     return (
         <>
-            <Pressable style={styles.button} onPress={onPress} hitSlop={8}>
-                <IconSymbol name={icon} size={18} color="#FFFFFF" />
-            </Pressable>
+            <IconButton icon={icon} onPress={onPress} />
 
             <Modal visible={visible} transparent animationType="fade" onRequestClose={onRequestClose}>
                 <KeyboardAvoidingView style={styles.keyboardAvoider} behavior={Platform.OS === "ios" ? "padding" : "height"}>

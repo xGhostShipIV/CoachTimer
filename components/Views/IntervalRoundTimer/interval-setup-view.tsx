@@ -1,5 +1,4 @@
-import { BackButton } from "@/components/back-button";
-import { LoadTimerButton, SaveTimerButton } from "@/components/timer-action-buttons";
+import { BackButton, LoadTimerButton, SaveTimerButton } from "@/components/timer-action-buttons";
 import { styles } from "@/components/Timer/time-keeper-styles";
 import { DEFAULT_CONFIG } from "@/constants/data-constants";
 import { TimeConfiguration } from "@/data/data-types";
