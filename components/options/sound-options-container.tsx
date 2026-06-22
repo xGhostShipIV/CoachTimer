@@ -3,9 +3,12 @@ import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { sfxNames } from '@/constants/asset-constants';
 import { SoundOptions } from '@/data/data-types';
-import { Picker } from '@react-native-picker/picker';
-import React from 'react';
 import { StyleSheet, TextInput } from 'react-native';
+import { Collapsible } from '../ui/collapsible';
+import { WheelPicker } from '../ui/wheel-picker';
+
+const NONE_OPTION = 'None';
+const SFX_OPTIONS = [NONE_OPTION, ...sfxNames];
 
 interface SoundOptionsProps {
 	options: SoundOptions;
@@ -13,85 +16,81 @@ interface SoundOptionsProps {
 }
 
 export default function SoundOptionsContainer({ options, onChange }: SoundOptionsProps) {
-	const setField = <K extends keyof SoundOptions>(key: K, value: SoundOptions[K]) => {
-		onChange({ ...options, [key]: value });
-	};
+    return (
+        <Collapsible
+            title='Sound Options'
+            children={useSoundOptions({options, onChange})}>
+        </Collapsible>
+	);
+}
 
-	return (
-		<ThemedView style={styles.container}>
+function useSoundOptions({ options, onChange }: SoundOptionsProps) {
+    const setField = <K extends keyof SoundOptions>(key: K, value: SoundOptions[K]) => {
+        onChange({ ...options, [key]: value });
+    };
+
+    const setSfxField = (key: 'roundStartSfx' | 'roundEndSfx' | 'roundEndWarningSfx', value: string) => {
+        setField(key, value === NONE_OPTION ? undefined : value);
+    };
+
+    return (
+        <ThemedView style={styles.container}>
 			<ThemedView style={styles.fieldContainer}>
 				<ThemedText style={styles.label}>Round Start SFX</ThemedText>
-				<Picker
-					style={styles.picker}
-					selectedValue={options?.roundStartSfx ?? ''}
-					onValueChange={(value) => setField('roundStartSfx', value === '' ? undefined : value)}
-				>
-					<Picker.Item label="None" value="" />
-					{sfxNames.map((name) => (
-						<Picker.Item key={name} label={name} value={name} />
-					))}
-				</Picker>
+				<WheelPicker
+					options={SFX_OPTIONS}
+					value={options?.roundStartSfx ?? NONE_OPTION}
+					onChange={(value) => setSfxField('roundStartSfx', value)}
+				/>
 			</ThemedView>
 
 			<ThemedView style={styles.fieldContainer}>
 				<ThemedText style={styles.label}>Round End SFX</ThemedText>
-				<Picker
-					style={styles.picker}
-					selectedValue={options?.roundEndSfx ?? ''}
-					onValueChange={(value) => setField('roundEndSfx', value === '' ? undefined : value)}
-				>
-					<Picker.Item label="None" value="" />
-					{sfxNames.map((name) => (
-						<Picker.Item key={name} label={name} value={name} />
-					))}
-				</Picker>
+				<WheelPicker
+					options={SFX_OPTIONS}
+					value={options?.roundEndSfx ?? NONE_OPTION}
+					onChange={(value) => setSfxField('roundEndSfx', value)}
+				/>
 			</ThemedView>
 
 			<ThemedView style={styles.fieldContainer}>
 				<ThemedText style={styles.label}>Round End Warning SFX</ThemedText>
-				<Picker
-					style={styles.picker}
-					selectedValue={options?.roundEndWarningSfx ?? ''}
-					onValueChange={(value) => setField('roundEndWarningSfx', value === '' ? undefined : value)}
-				>
-					<Picker.Item label="None" value="" />
-					{sfxNames.map((name) => (
-						<Picker.Item key={name} label={name} value={name} />
-					))}
-				</Picker>
+				<WheelPicker
+					options={SFX_OPTIONS}
+					value={options?.roundEndWarningSfx ?? NONE_OPTION}
+					onChange={(value) => setSfxField('roundEndWarningSfx', value)}
+				/>
 			</ThemedView>
 
 			<ThemedView style={styles.row}>
 				<ThemedView style={styles.fieldSplit}>
-					<ThemedText style={styles.label}>Round End Warning (ms)</ThemedText>
+					<ThemedText style={styles.label}>Round End Warning</ThemedText>
 					<TextInput
 						style={styles.input}
-						value={String(options?.roundEndWarningMs ?? '')}
+						value={String((options?.roundEndWarningMs ?? 0) / 1000)}
 						keyboardType="numeric"
-						placeholder="ms"
 						onChangeText={(txt) => {
 							const v = parseInt(txt, 10);
-							setField('roundEndWarningMs', Number.isNaN(v) ? undefined : v);
+							setField('roundEndWarningMs', Number.isNaN(v) ? undefined : v * 1000);
 						}}
 					/>
 				</ThemedView>
 
 				<ThemedView style={[styles.fieldSplit, styles.fieldSplitLast]}>
-					<ThemedText style={styles.label}>Rest End Warning (ms)</ThemedText>
+					<ThemedText style={styles.label}>Rest End Warning</ThemedText>
 					<TextInput
 						style={styles.input}
-						value={String(options?.restEndWarningMs ?? '')}
+						value={String((options?.restEndWarningMs ?? 0) / 1000)}
 						keyboardType="numeric"
-						placeholder="ms"
 						onChangeText={(txt) => {
 							const v = parseInt(txt, 10);
-							setField('restEndWarningMs', Number.isNaN(v) ? undefined : v);
+							setField('restEndWarningMs', Number.isNaN(v) ? undefined : v * 1000);
 						}}
 					/>
 				</ThemedView>
 			</ThemedView>
 		</ThemedView>
-	);
+    )
 }
 
 const styles = StyleSheet.create({
@@ -104,11 +103,6 @@ const styles = StyleSheet.create({
 	label: {
 		fontSize: 14,
 		marginBottom: 6,
-	},
-	picker: {
-		borderWidth: 1,
-		borderColor: '#ccc',
-		borderRadius: 6,
 	},
 	input: {
 		borderWidth: 1,

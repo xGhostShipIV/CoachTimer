@@ -1,7 +1,8 @@
-﻿import { IntervalData } from "@/data/data-types";
+﻿import { IntervalData, SoundOptions } from "@/data/data-types";
 import React from "react";
 import { Text, TextInput, TouchableOpacity, View } from "react-native";
 import { styles } from "../Notifications/notification-styles";
+import SoundOptionsContainer from "../options/sound-options-container";
 import { ThemedText } from "../themed-text";
 import { ThemedView } from "../themed-view";
 
@@ -14,10 +15,29 @@ interface IntervalItemProps {
 
 function IntervalItem({ index, data, onRemove, onUpdate }: IntervalItemProps) {
     const updateField = (field: keyof IntervalData, text: string) => {
-        const value = parseInt(text, 10);
+        const parsed = parseInt(text, 10);
+        const safe = Number.isNaN(parsed) ? 0 : parsed;
+
+        // `on` and `off` are stored in milliseconds, but user edits in seconds.
+        if (field === 'on' || field === 'off') {
+            onUpdate(index, {
+                ...data,
+                [field]: safe * 1000,
+            });
+            return;
+        }
+
+        // repeats stays as a unitless number
         onUpdate(index, {
             ...data,
-            [field]: Number.isNaN(value) ? 0 : value,
+            [field]: safe,
+        });
+    };
+
+    const updateSoundConfiguration = (next: SoundOptions) => {
+        onUpdate(index, {
+            ...data,
+            soundConfiguration: next,
         });
     };
 
@@ -28,7 +48,7 @@ function IntervalItem({ index, data, onRemove, onUpdate }: IntervalItemProps) {
                     <ThemedText style={styles.label}>On</ThemedText>
                     <TextInput
                         style={styles.input}
-                        value={data.on.toString()}
+                        value={String(Math.round(data.on / 1000))}
                         keyboardType="numeric"
                         onChangeText={(text) => updateField("on", text)}
                         placeholder="30"
@@ -39,7 +59,7 @@ function IntervalItem({ index, data, onRemove, onUpdate }: IntervalItemProps) {
                     <ThemedText style={styles.label}>Off</ThemedText>
                     <TextInput
                         style={styles.input}
-                        value={data.off.toString()}
+                        value={String(Math.round(data.off / 1000))}
                         keyboardType="numeric"
                         onChangeText={(text) => updateField("off", text)}
                         placeholder="30"
@@ -72,6 +92,11 @@ function IntervalItem({ index, data, onRemove, onUpdate }: IntervalItemProps) {
                     <Text style={{ color: "white", fontSize: 18, fontWeight: "bold" }}>×</Text>
                 </TouchableOpacity>
             </ThemedView>
+
+            <SoundOptionsContainer
+                options={data.soundConfiguration ?? {}}
+                onChange={updateSoundConfiguration}
+            />
         </ThemedView>
     );
 }
@@ -85,8 +110,9 @@ interface IntervalContainerProps {
 
 export default function IntervalContainer({ data, onChange }: IntervalContainerProps) {
     const handleAddInterval = () => {
-        const defaultValue = parseInt(DEFAULT_INTERVAL_SECONDS, 10);
-        const nextIntervals = [...data, { on: defaultValue, off: defaultValue, repeats: 1 }];
+        const defaultSeconds = parseInt(DEFAULT_INTERVAL_SECONDS, 10);
+        const defaultMs = defaultSeconds * 1000;
+        const nextIntervals = [...data, { on: defaultMs, off: defaultMs, repeats: 1 }];
         onChange?.(nextIntervals);
     };
 

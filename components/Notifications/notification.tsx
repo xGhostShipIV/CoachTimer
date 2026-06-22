@@ -5,7 +5,7 @@ import { NotificationData } from "./notification-container";
 import { styles } from "./notification-styles";
 import { getSoundNames } from "./sound-manager";
 
-const DEFAULT_INTERVAL_SECONDS = '30';
+const DEFAULT_INTERVAL_SECONDS = '30000';
 
 // Will need:
 export default function Notification({ index, data, onRemove, onUpdate }: { index: number, data: NotificationData, onRemove: (index: number) => void, onUpdate: (index: number, updatedData: NotificationData) => void }) {
@@ -38,11 +38,11 @@ export default function Notification({ index, data, onRemove, onUpdate }: { inde
                 <View style={[styles.fieldGroup, styles.intervalGroup]}>
                     <TextInput
                         style={styles.input}
-                        value={data.intervalSeconds.toString()}
+                        value={String(Math.round((data.intervalMs ?? 0) / 1000))}
                         onChangeText={(text) => {
                             const intervalSeconds = parseInt(text, 10);
                             if (!isNaN(intervalSeconds)) {
-                                onUpdate(index, { ...data, intervalSeconds });
+                                onUpdate(index, { ...data, intervalMs: intervalSeconds * 1000 });
                             }
                         }}
                         placeholder={DEFAULT_INTERVAL_SECONDS}

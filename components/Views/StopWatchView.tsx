@@ -1,5 +1,7 @@
+import mainStyles from "@/styles/main-styles";
 import { useCallback, useRef, useState } from "react";
 import { Pressable } from "react-native";
+import { BackButton } from "../back-button";
 import NotificationContainer from "../Notifications/notification-container";
 import { ThemedText } from "../themed-text";
 import { ThemedView } from "../themed-view";
@@ -9,7 +11,11 @@ import { TimeText } from "../Timer/time-text";
 // Now I can create and edit notifications.
 // How can I connect my elapsed time, to the execution of our notifications?
 
-export function StopwatchView() {
+interface StopwatchViewProps {
+    onBack?: () => void;
+}
+
+export function StopwatchView({ onBack }: StopwatchViewProps) {
     const [isPaused, setIsPaused] = useState(true);
     const [resetSignal, setResetSignal] = useState(0);
     const notificationTickRef = useRef<(delta: number) => void>(() => {});
@@ -28,7 +34,9 @@ export function StopwatchView() {
     };
 
     return (
-        <ThemedView style={styles.container}>
+        <ThemedView style={[mainStyles.container, styles.container]}>
+            {onBack && <BackButton onPress={onBack} style={{ alignSelf: "flex-start", marginBottom: 12 }} />}
+
             <NotificationContainer
                 tickHandlerRef={notificationTickRef}
                 resetSignal={resetSignal}

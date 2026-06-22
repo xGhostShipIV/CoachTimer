@@ -8,7 +8,8 @@ const DEFAULT_INTERVAL_SECONDS = '30';
 
 export interface NotificationData {
     soundPath: string;
-    intervalSeconds: number;
+    // stored as milliseconds
+    intervalMs: number;
 }
 
 interface NotificationContainerProps {
@@ -54,7 +55,7 @@ const NotificationContainer: React.FC<NotificationContainerProps> = ({ tickHandl
         setNotifications((previous) => {
             const newNotification: NotificationData = {
                 soundPath: soundFiles[0],
-                intervalSeconds: parseInt(DEFAULT_INTERVAL_SECONDS, 10),
+                intervalMs: parseInt(DEFAULT_INTERVAL_SECONDS, 10) * 1000,
             };
             return [...previous, newNotification];
         })
@@ -92,15 +93,16 @@ const NotificationContainer: React.FC<NotificationContainerProps> = ({ tickHandl
             notificationTimersRef.current = notificationTimersRef.current.map((elapsed, index) => {
                 const notification = notifications[index];
                 const nextElapsed = elapsed + delta;
-                const intervalMillis = notification.intervalSeconds * 1000;
+                const intervalMillis = notification.intervalMs;
 
                 if (intervalMillis <= 0) {
                     return nextElapsed;
                 }
 
                 if (nextElapsed >= intervalMillis) {
-                    if (notification.intervalSeconds > bestIntervalSeconds) {
-                        bestIntervalSeconds = notification.intervalSeconds;
+                    const intervalSeconds = Math.round((notification.intervalMs ?? 0) / 1000);
+                    if (intervalSeconds > bestIntervalSeconds) {
+                        bestIntervalSeconds = intervalSeconds;
                         bestNotificationIndex = index;
                     }
                     // Prevent the bleeding of milliseconds since the values will
