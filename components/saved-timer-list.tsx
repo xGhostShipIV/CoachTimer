@@ -7,9 +7,12 @@ import { Collapsible } from "./ui/collapsible";
 
 interface SavedTimerListProps {
     onLoad: (entry: SavedConfiguration) => void;
+    // Notified after a saved timer is deleted, so siblings reading the same
+    // saved-configurations storage (e.g. SuggestedTimers) can refresh too.
+    onDeleted?: () => void;
 }
 
-export default function SavedTimerList({ onLoad }: SavedTimerListProps) {
+export default function SavedTimerList({ onLoad, onDeleted }: SavedTimerListProps) {
     const [saved, setSaved] = useState<SavedConfiguration[]>([]);
 
     const refresh = async () => {
@@ -23,6 +26,7 @@ export default function SavedTimerList({ onLoad }: SavedTimerListProps) {
     const handleDelete = async (name: string) => {
         await deleteConfiguration(name);
         await refresh();
+        onDeleted?.();
     };
 
     return (

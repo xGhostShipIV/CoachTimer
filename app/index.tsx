@@ -5,6 +5,7 @@ import { Pressable, StyleSheet } from 'react-native';
 import ParallaxScrollView from '@/components/parallax-scroll-view';
 import { ScreenFrame } from '@/components/screen-frame';
 import SavedTimerList from '@/components/saved-timer-list';
+import SuggestedTimers from '@/components/suggested-timers';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 
@@ -18,6 +19,7 @@ type ActiveView = 'interval' | 'stopwatch';
 export default function HomeScreen() {
   const [activeView, setActiveView] = useState<ActiveView | null>(null);
   const [pendingEntry, setPendingEntry] = useState<SavedConfiguration | undefined>(undefined);
+  const [savedListVersion, setSavedListVersion] = useState(0);
 
   if (activeView === 'interval') {
     return (
@@ -50,6 +52,14 @@ export default function HomeScreen() {
             Choose a Timer
           </ThemedText>
 
+          <SuggestedTimers
+            onSelect={(entry) => {
+              setPendingEntry(entry);
+              setActiveView('interval');
+            }}
+            refreshSignal={savedListVersion}
+          />
+
           <Pressable
             style={[mainStyles.buttonPrimary, styles.landingButton]}
             onPress={() => {
@@ -70,6 +80,7 @@ export default function HomeScreen() {
               setPendingEntry(entry);
               setActiveView('interval');
             }}
+            onDeleted={() => setSavedListVersion((version) => version + 1)}
           />
         </ThemedView>
       </ThemedView>
