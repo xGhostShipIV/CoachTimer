@@ -1,9 +1,9 @@
+import { Font } from "@/styles/BTCIntervalTimer";
+import { landingStyles } from "@/styles/navyTheme";
 import { listSavedConfigurations, SavedConfiguration, seedSuggestionTestData } from "@/utils/configuration-storage";
 import { suggestConfigurations } from "@/utils/timer-suggestions";
 import { useEffect, useState } from "react";
-import { StyleSheet, TouchableOpacity } from "react-native";
-import { ThemedText } from "./themed-text";
-import { ThemedView } from "./themed-view";
+import { Pressable, StyleSheet, Text, View } from "react-native";
 
 interface SuggestedTimersProps {
     onSelect: (entry: SavedConfiguration) => void;
@@ -11,13 +11,17 @@ interface SuggestedTimersProps {
     // force a re-fetch, since suggestions are computed from the same
     // saved-configurations storage but aren't otherwise notified of changes.
     refreshSignal?: number;
+    // Notified after the dev-only seed button writes test data, so siblings
+    // reading the same saved-configurations storage (e.g. SavedTimerList)
+    // can refresh too.
+    onDataChanged?: () => void;
 }
 
 // Surfaces saved timers whose usage history clusters around the current time
 // of day. Renders nothing when there's nothing worth suggesting (other than
 // the dev-only seed button below), so it never takes up space on the home
 // screen unless it has something useful to offer.
-export default function SuggestedTimers({ onSelect, refreshSignal }: SuggestedTimersProps) {
+export default function SuggestedTimers({ onSelect, refreshSignal, onDataChanged }: SuggestedTimersProps) {
     const [suggestions, setSuggestions] = useState<SavedConfiguration[]>([]);
 
     const refresh = async () => {
@@ -45,67 +49,59 @@ export default function SuggestedTimers({ onSelect, refreshSignal }: SuggestedTi
     }
 
     return (
-        <ThemedView style={styles.container}>
+        <View style={landingStyles.recoBlock}>
             {suggestions.length > 0 && (
                 <>
-                    <ThemedText style={styles.heading}>Suggested for Now</ThemedText>
+                    <Text style={landingStyles.recoKicker}>▸ RECOMMENDED</Text>
 
                     {suggestions.map((entry) => (
-                        <TouchableOpacity key={entry.name} style={styles.suggestion} onPress={() => onSelect(entry)}>
-                            <ThemedText style={styles.suggestionText}>{entry.name}</ThemedText>
-                        </TouchableOpacity>
+                        <Pressable key={entry.name} style={styles.card} onPress={() => onSelect(entry)}>
+                            <View style={styles.cardTextBlock}>
+                                <Text style={landingStyles.recoTitle}>{entry.name.toUpperCase()}</Text>
+                                <Text style={landingStyles.recoMeta}>USED AROUND THIS TIME</Text>
+                            </View>
+                        </Pressable>
                     ))}
                 </>
             )}
 
             {__DEV__ && (
-                <TouchableOpacity
+                <Pressable
                     style={styles.devSeedButton}
                     onPress={async () => {
                         await seedSuggestionTestData();
                         await refresh();
+                        onDataChanged?.();
                     }}
                 >
-                    <ThemedText style={styles.devSeedButtonText}>Seed Test Data (dev)</ThemedText>
-                </TouchableOpacity>
+                    <Text style={styles.devSeedButtonText}>Seed Test Data (dev)</Text>
+                </Pressable>
             )}
-        </ThemedView>
+        </View>
     );
 }
 
 const styles = StyleSheet.create({
-    container: {
-        marginBottom: 16,
-    },
-    heading: {
-        fontSize: 14,
-        fontWeight: "700",
-        marginBottom: 8,
-        opacity: 0.8,
-    },
-    suggestion: {
-        backgroundColor: "#0A84FF",
-        borderRadius: 8,
-        paddingVertical: 14,
-        paddingHorizontal: 16,
+    card: {
+        ...landingStyles.recoCard,
         marginBottom: 8,
     },
-    suggestionText: {
-        color: "#FFFFFF",
-        fontSize: 16,
-        fontWeight: "600",
+    cardTextBlock: {
+        flex: 1,
     },
     devSeedButton: {
-        backgroundColor: "#666666",
-        borderRadius: 8,
+        backgroundColor: "#15294f",
+        borderWidth: 1,
+        borderColor: "#3a4f80",
+        borderRadius: 6,
         paddingVertical: 10,
-        paddingHorizontal: 16,
         marginTop: 4,
     },
     devSeedButtonText: {
-        color: "#FFFFFF",
+        fontFamily: Font.oswaldSemi,
+        color: "#aeb9d6",
         fontSize: 13,
-        fontWeight: "600",
+        letterSpacing: 1,
         textAlign: "center",
     },
 });

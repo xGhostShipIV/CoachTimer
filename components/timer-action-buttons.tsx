@@ -1,24 +1,33 @@
 import { TimeConfiguration } from "@/data/data-types";
+import { Color, Font, SETUP } from "@/styles/BTCIntervalTimer";
 import { listSavedConfigurations, saveConfiguration, SavedConfiguration } from "@/utils/configuration-storage";
 import { ComponentProps, PropsWithChildren, useState } from "react";
-import { KeyboardAvoidingView, Modal, Platform, Pressable, ScrollView, StyleProp, StyleSheet, Text, TextInput, View, ViewStyle } from "react-native";
+import { KeyboardAvoidingView, Modal, Platform, Pressable, ScrollView, StyleProp, StyleSheet, Text, TextInput, TextStyle, View, ViewStyle } from "react-native";
 import { IconSymbol } from "./ui/icon-symbol";
 
 type IconName = ComponentProps<typeof IconSymbol>["name"];
 
 interface IconButtonProps {
-    icon: IconName;
+    icon?: IconName;
+    // Renders a text chip instead of the icon glyph when provided.
+    label?: string;
     onPress?: () => void;
     size?: number;
     style?: StyleProp<ViewStyle>;
+    textStyle?: StyleProp<TextStyle>;
 }
 
-// Small circular translucent icon button. The shared visual atom behind
-// BackButton and the trigger for each FloatingPromptButton below.
-function IconButton({ icon, onPress, size = 18, style }: IconButtonProps) {
+// Small circular translucent icon button (or, when `label` is given, a text
+// chip instead) — the shared visual atom behind BackButton and the trigger
+// for each FloatingPromptButton below.
+function IconButton({ icon, label, onPress, size = 18, style, textStyle }: IconButtonProps) {
     return (
         <Pressable style={[styles.button, style]} onPress={onPress} hitSlop={8}>
-            <IconSymbol name={icon} size={size} color="#FFFFFF" />
+            {label ? (
+                <Text style={[styles.buttonLabel, textStyle]}>{label}</Text>
+            ) : (
+                icon && <IconSymbol name={icon} size={size} color="#FFFFFF" />
+            )}
         </Pressable>
     );
 }
@@ -33,21 +42,24 @@ export function BackButton({ onPress, style }: BackButtonProps) {
 }
 
 interface FloatingPromptButtonProps extends PropsWithChildren {
-    icon: IconName;
+    icon?: IconName;
+    label?: string;
     title: string;
     visible: boolean;
     onPress: () => void;
     onRequestClose: () => void;
+    triggerStyle?: StyleProp<ViewStyle>;
+    triggerTextStyle?: StyleProp<TextStyle>;
 }
 
-// Shared chrome for a small icon button that opens a floating modal prompt:
+// Shared chrome for a small button that opens a floating modal prompt:
 // trigger -> Modal -> dim backdrop (tap to close) -> centered card -> title
 // + caller-supplied body. Backs both SaveTimerButton and LoadTimerButton
 // below, which differ only in their body content and open-state handling.
-function FloatingPromptButton({ icon, title, visible, onPress, onRequestClose, children }: FloatingPromptButtonProps) {
+function FloatingPromptButton({ icon, label, title, visible, onPress, onRequestClose, triggerStyle, triggerTextStyle, children }: FloatingPromptButtonProps) {
     return (
         <>
-            <IconButton icon={icon} onPress={onPress} />
+            <IconButton icon={icon} label={label} onPress={onPress} style={triggerStyle} textStyle={triggerTextStyle} />
 
             <Modal visible={visible} transparent animationType="fade" onRequestClose={onRequestClose}>
                 <KeyboardAvoidingView style={styles.keyboardAvoider} behavior={Platform.OS === "ios" ? "padding" : "height"}>
@@ -66,11 +78,13 @@ function FloatingPromptButton({ icon, title, visible, onPress, onRequestClose, c
 interface SaveTimerButtonProps {
     configuration: TimeConfiguration;
     onSaved?: (name: string) => void;
+    triggerStyle?: StyleProp<ViewStyle>;
+    triggerTextStyle?: StyleProp<TextStyle>;
 }
 
-// Small icon button that opens a floating name prompt for saving the
-// current configuration, instead of taking up permanent space in the form.
-export function SaveTimerButton({ configuration, onSaved }: SaveTimerButtonProps) {
+// Small button that opens a floating name prompt for saving the current
+// configuration, instead of taking up permanent space in the form.
+export function SaveTimerButton({ configuration, onSaved, triggerStyle, triggerTextStyle }: SaveTimerButtonProps) {
     const [isOpen, setIsOpen] = useState(false);
     const [name, setName] = useState("");
 
@@ -89,12 +103,22 @@ export function SaveTimerButton({ configuration, onSaved }: SaveTimerButtonProps
     };
 
     return (
-        <FloatingPromptButton icon="square.and.arrow.down" title="Save Timer As" visible={isOpen} onPress={() => setIsOpen(true)} onRequestClose={close}>
+        <FloatingPromptButton
+            icon="square.and.arrow.down"
+            label="SAVE"
+            title="Save Timer As"
+            visible={isOpen}
+            onPress={() => setIsOpen(true)}
+            onRequestClose={close}
+            triggerStyle={triggerStyle}
+            triggerTextStyle={triggerTextStyle}
+        >
             <TextInput
                 style={styles.input}
                 value={name}
                 onChangeText={setName}
                 placeholder="Timer name"
+                placeholderTextColor={SETUP.labelDim}
                 autoFocus
                 onSubmitEditing={handleSave}
             />
@@ -113,11 +137,13 @@ export function SaveTimerButton({ configuration, onSaved }: SaveTimerButtonProps
 
 interface LoadTimerButtonProps {
     onLoad: (entry: SavedConfiguration) => void;
+    triggerStyle?: StyleProp<ViewStyle>;
+    triggerTextStyle?: StyleProp<TextStyle>;
 }
 
-// Small icon button that opens a floating list of saved configs to load,
-// so loading a saved timer isn't only reachable from the home screen.
-export function LoadTimerButton({ onLoad }: LoadTimerButtonProps) {
+// Small button that opens a floating list of saved configs to load, so
+// loading a saved timer isn't only reachable from the home screen.
+export function LoadTimerButton({ onLoad, triggerStyle, triggerTextStyle }: LoadTimerButtonProps) {
     const [isOpen, setIsOpen] = useState(false);
     const [saved, setSaved] = useState<SavedConfiguration[]>([]);
 
@@ -132,7 +158,16 @@ export function LoadTimerButton({ onLoad }: LoadTimerButtonProps) {
     };
 
     return (
-        <FloatingPromptButton icon="list.bullet" title="Load Timer" visible={isOpen} onPress={open} onRequestClose={() => setIsOpen(false)}>
+        <FloatingPromptButton
+            icon="list.bullet"
+            label="LOAD"
+            title="Load Timer"
+            visible={isOpen}
+            onPress={open}
+            onRequestClose={() => setIsOpen(false)}
+            triggerStyle={triggerStyle}
+            triggerTextStyle={triggerTextStyle}
+        >
             {saved.length === 0 ? (
                 <Text style={styles.emptyText}>No saved timers yet.</Text>
             ) : (
@@ -154,19 +189,25 @@ export function LoadTimerButton({ onLoad }: LoadTimerButtonProps) {
 
 const styles = StyleSheet.create({
     button: {
-        width: 36,
+        minWidth: 36,
         height: 36,
         borderRadius: 18,
         alignItems: "center",
         justifyContent: "center",
         backgroundColor: "rgba(0, 0, 0, 0.35)",
     },
+    buttonLabel: {
+        fontFamily: Font.oswaldSemi,
+        fontSize: 13,
+        letterSpacing: 1.5,
+        color: Color.white,
+    },
     keyboardAvoider: {
         flex: 1,
     },
     backdrop: {
         flex: 1,
-        backgroundColor: "rgba(0, 0, 0, 0.4)",
+        backgroundColor: "rgba(6, 10, 22, 0.66)",
         alignItems: "center",
         justifyContent: "center",
         padding: 24,
@@ -175,22 +216,27 @@ const styles = StyleSheet.create({
         width: "100%",
         maxWidth: 360,
         maxHeight: "70%",
-        backgroundColor: "#FFFFFF",
+        backgroundColor: "#0c1530",
+        borderWidth: 1,
+        borderColor: "#21305a",
         borderRadius: 12,
         padding: 20,
         gap: 12,
     },
     title: {
+        fontFamily: Font.oswaldSemi,
         fontSize: 16,
-        fontWeight: "700",
-        color: "#1C1C1E",
+        letterSpacing: 1,
+        color: Color.white,
     },
     input: {
+        backgroundColor: SETUP.field,
         borderWidth: 1,
-        borderColor: "#ccc",
+        borderColor: SETUP.fieldBorder,
         borderRadius: 6,
         padding: 10,
         fontSize: 16,
+        color: Color.white,
     },
     actions: {
         flexDirection: "row",
@@ -206,35 +252,42 @@ const styles = StyleSheet.create({
         borderRadius: 6,
     },
     cancelButton: {
-        backgroundColor: "#E0E0E0",
+        backgroundColor: SETUP.chip,
+        borderWidth: 1,
+        borderColor: SETUP.chipBorder,
     },
     cancelButtonText: {
-        color: "#333333",
-        fontWeight: "700",
+        fontFamily: Font.oswaldSemi,
+        color: Color.white,
+        letterSpacing: 0.5,
     },
     saveButton: {
-        backgroundColor: "#1976D2",
+        backgroundColor: Color.orange,
     },
     saveButtonText: {
-        color: "#FFFFFF",
-        fontWeight: "700",
+        fontFamily: Font.oswaldBold,
+        color: Color.navy,
+        letterSpacing: 0.5,
     },
     emptyText: {
+        fontFamily: Font.barlowSemi,
         fontSize: 14,
-        color: "#666666",
+        color: SETUP.label,
     },
     list: {
         maxHeight: 280,
     },
     row: {
+        backgroundColor: SETUP.chip,
         borderWidth: 1,
-        borderColor: "#ccc",
+        borderColor: SETUP.chipBorder,
         borderRadius: 6,
         padding: 10,
         marginBottom: 8,
     },
     rowText: {
-        fontSize: 16,
-        color: "#000000",
+        fontFamily: Font.oswaldSemi,
+        fontSize: 15,
+        color: Color.white,
     },
 });

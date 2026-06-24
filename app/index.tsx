@@ -1,22 +1,23 @@
 import { Image } from 'expo-image';
 import { useState } from 'react';
-import { Pressable, StyleSheet } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import ParallaxScrollView from '@/components/parallax-scroll-view';
 import { ScreenFrame } from '@/components/screen-frame';
 import SavedTimerList from '@/components/saved-timer-list';
 import SuggestedTimers from '@/components/suggested-timers';
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
+import Concrete from '@/components/ui/ConcreteButton';
 
 import IntervalView from '@/components/Views/IntervalRoundTimer/interval-view';
 import { StopwatchView } from '@/components/Views/StopWatchView';
-import mainStyles, { MAIN_COLORS } from '@/styles/main-styles';
+import { Color } from '@/styles/BTCIntervalTimer';
+import { landingStyles } from '@/styles/navyTheme';
 import { SavedConfiguration } from '@/utils/configuration-storage';
 
 type ActiveView = 'interval' | 'stopwatch';
 
 export default function HomeScreen() {
+  const insets = useSafeAreaInsets();
   const [activeView, setActiveView] = useState<ActiveView | null>(null);
   const [pendingEntry, setPendingEntry] = useState<SavedConfiguration | undefined>(undefined);
   const [savedListVersion, setSavedListVersion] = useState(0);
@@ -38,74 +39,67 @@ export default function HomeScreen() {
   }
 
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: MAIN_COLORS.primaryOrange, dark: MAIN_COLORS.primaryBlue }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/btc-logo.png')}
-          style={styles.reactLogo}
+    <View style={styles.fullScreen}>
+      <ScrollView
+        contentContainerStyle={[
+          styles.scrollContent,
+          { paddingTop: insets.top + 16, paddingBottom: insets.bottom + 24 },
+        ]}
+      >
+        <View style={landingStyles.logoWrap}>
+          <Image source={require('@/assets/images/btc-logo.png')} style={landingStyles.logo} />
+        </View>
+
+        <SuggestedTimers
+          onSelect={(entry) => {
+            setPendingEntry(entry);
+            setActiveView('interval');
+          }}
+          refreshSignal={savedListVersion}
+          onDataChanged={() => setSavedListVersion((version) => version + 1)}
         />
-      }>
-      <ThemedView style={mainStyles.container}>
-        <ThemedView style={mainStyles.card}>
-          <ThemedText type="title" style={styles.landingTitle}>
-            Choose a Timer
-          </ThemedText>
 
-          <SuggestedTimers
-            onSelect={(entry) => {
-              setPendingEntry(entry);
-              setActiveView('interval');
-            }}
-            refreshSignal={savedListVersion}
-          />
-
-          <Pressable
-            style={[mainStyles.buttonPrimary, styles.landingButton]}
+        <View style={landingStyles.ctaGroup}>
+          <Concrete
+            ledge={Color.orangeLedge}
             onPress={() => {
               setPendingEntry(undefined);
               setActiveView('interval');
-            }}>
-            <ThemedText style={mainStyles.buttonPrimaryText}>Interval Timer</ThemedText>
-          </Pressable>
-
-          <Pressable
-            style={[mainStyles.buttonPrimary, styles.landingButton]}
-            onPress={() => setActiveView('stopwatch')}>
-            <ThemedText style={mainStyles.buttonPrimaryText}>Stopwatch</ThemedText>
-          </Pressable>
-
-          <SavedTimerList
-            onLoad={(entry) => {
-              setPendingEntry(entry);
-              setActiveView('interval');
             }}
-            onDeleted={() => setSavedListVersion((version) => version + 1)}
-          />
-        </ThemedView>
-      </ThemedView>
-    </ParallaxScrollView>
+          >
+            <View style={landingStyles.ctaPrimary}>
+              <Text style={landingStyles.ctaPrimaryText}>▸ INTERVAL TIMER</Text>
+            </View>
+          </Concrete>
+
+          <Pressable style={landingStyles.ctaSecondary} onPress={() => setActiveView('stopwatch')}>
+            <Text style={landingStyles.ctaSecondaryText}>⏱ STOPWATCH</Text>
+          </Pressable>
+        </View>
+
+        <SavedTimerList
+          onLoad={(entry) => {
+            setPendingEntry(entry);
+            setActiveView('interval');
+          }}
+          onDeleted={() => setSavedListVersion((version) => version + 1)}
+          refreshSignal={savedListVersion}
+        />
+
+        <View style={landingStyles.footer}>
+          <Text style={landingStyles.footerUrl}>burlingtontrainingcentre.com</Text>
+        </View>
+      </ScrollView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  reactLogo: {
-    position: 'absolute',
-    bottom: 0,
-    left: '50%',
-    width: 290,
-    height: 178,
-    backgroundColor: 'transparent',
-    transform: [{ translateX: -145 }],
+  fullScreen: {
+    flex: 1,
+    backgroundColor: Color.navy,
   },
-  landingTitle: {
-    textAlign: 'center',
-    marginBottom: 20,
-  },
-  landingButton: {
-    width: '100%',
-    paddingVertical: 18,
-    marginBottom: 16,
-    alignItems: 'center',
+  scrollContent: {
+    flexGrow: 1,
   },
 });

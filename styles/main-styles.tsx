@@ -2,11 +2,18 @@ import { StyleSheet } from 'react-native';
 
 export const MAIN_COLORS = {
   primaryOrange: '#f05524',
-  primaryBlue: '#0A1936',
+  primaryBlue: '#122142',
   primaryWhite: '#ffffff',
   background: '#f5f5f5',
   textDark: '#333333',
   border: '#e0e0e0',
+};
+
+export const Color = {
+  navy: '#122142',
+  orange: '#F05A28',
+  orangeLedge: '#a63c18',
+  white: '#FFFFFF',
 };
 
 const mainStyles = StyleSheet.create({
@@ -15,22 +22,13 @@ const mainStyles = StyleSheet.create({
   screen: {
     flex: 1,
   },
-  // Bordered frame used by ScreenFrame to encapsulate a full-screen view.
-  // Margins are applied separately so the top one can account for safe-area insets.
-  screenFrame: {
-    flex: 1,
-    borderWidth: 3,
-    borderColor: MAIN_COLORS.primaryOrange,
-    borderRadius: 16,
-    overflow: 'hidden',
-  },
   container: {
     flex: 1,
     width: '100%',
     maxWidth: 1200,
     alignSelf: 'center',
     padding: 20,
-    backgroundColor: MAIN_COLORS.primaryOrange,
+    backgroundColor: MAIN_COLORS.primaryBlue,
   },
   card: {
     flex: 1,

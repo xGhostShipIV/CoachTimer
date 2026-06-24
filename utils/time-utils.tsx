@@ -21,6 +21,16 @@ export function formatTimestamp(timestamp: number, showMilliseconds: boolean) {
         : timeString;
 }
 
+// MM:SS, rounded up to the nearest second — for the active timer's hero
+// countdown and per-interval segment times, which never run long enough to
+// need an hours digit.
+export function formatMinutesSeconds(timestamp: number) {
+    const roundedUp = Math.ceil(Math.max(timestamp, 0) / MS_IN_SECOND) * MS_IN_SECOND;
+    const minutes = Math.floor(roundedUp / MS_IN_MINUTE);
+    const seconds = Math.floor((roundedUp % MS_IN_MINUTE) / MS_IN_SECOND);
+    return `${pad(minutes, 2)}:${pad(seconds, 2)}`;
+}
+
 export function calculateRoundTime(intervals: IntervalData[]): number {
     // Intervals are represented in milliseconds. Return total round time in ms.
     return intervals.reduce((acc, curr, i) => {

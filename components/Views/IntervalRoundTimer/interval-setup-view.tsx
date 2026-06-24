@@ -1,17 +1,14 @@
 import { BackButton, LoadTimerButton, SaveTimerButton } from "@/components/timer-action-buttons";
-import { styles } from "@/components/Timer/time-keeper-styles";
 import { DEFAULT_CONFIG } from "@/constants/data-constants";
 import { TimeConfiguration } from "@/data/data-types";
-import mainStyles from "@/styles/main-styles";
+import { BTCStyles, Color } from "@/styles/BTCIntervalTimer";
 import { recordConfigurationUsage } from "@/utils/configuration-storage";
 import { calculateTotalConfigurationTime, formatTimestamp } from "@/utils/time-utils";
 import { useEffect, useState } from "react";
-import { Pressable, StyleSheet } from "react-native";
+import { Pressable, StyleSheet, Text, View } from "react-native";
 import IntervalContainer from "../../Intervals/interval";
 import RoundOptions from "../../Intervals/round-options";
 import SoundOptionsContainer from "../../options/sound-options-container";
-import { ThemedText } from "../../themed-text";
-import { ThemedView } from "../../themed-view";
 
 interface IntervalSetupProps {
     initialConfiguration?: TimeConfiguration;
@@ -32,89 +29,106 @@ export default function IntervalSetupView({ initialConfiguration, initialConfigN
         setLoadedConfigName(initialConfigName);
     }, [initialConfiguration, initialConfigName]);
 
+    const updateConfig = (partial: Partial<TimeConfiguration>) => {
+        const next = { ...configuration, ...partial };
+        setConfiguration(next);
+        onConfigurationChange?.(next);
+    };
+
     return (
-        <ThemedView style={mainStyles.container} >
-            <ThemedView style={localStyles.headerRow}>
-                {onBack ? <BackButton onPress={onBack} /> : <ThemedView />}
-                <ThemedView style={localStyles.headerActions}>
+        <View style={localStyles.screen}>
+            <View style={BTCStyles.toolbar}>
+                {onBack ? <BackButton onPress={onBack} style={BTCStyles.toolBack} /> : <View style={localStyles.backSpacer} />}
+
+                <View style={localStyles.toolbarActions}>
                     <LoadTimerButton
                         onLoad={(entry) => {
                             setConfiguration(entry.configuration);
                             onConfigurationChange?.(entry.configuration);
                             setLoadedConfigName(entry.name);
                         }}
+                        triggerStyle={BTCStyles.toolChip}
+                        triggerTextStyle={BTCStyles.toolChipText}
                     />
-                    <SaveTimerButton configuration={configuration} />
-                </ThemedView>
-            </ThemedView>
+                    <SaveTimerButton
+                        configuration={configuration}
+                        triggerStyle={BTCStyles.toolChip}
+                        triggerTextStyle={BTCStyles.toolChipText}
+                    />
+                </View>
+            </View>
 
-            <ThemedView style={localStyles.formContent}>
-                <RoundOptions
-                    numRounds={configuration.numRounds}
-                    onRoundsChanged={(value: number) => {
-                        const next = { ...configuration, numRounds: value };
-                        setConfiguration(next);
-                        onConfigurationChange?.(next);
-                    }}
-                    roundRest={configuration.roundRest / 1000}
-                    onRoundRestChanged={(value: number) => {
-                        const next = { ...configuration, roundRest: value * 1000 };
-                        setConfiguration(next);
-                        onConfigurationChange?.(next);
-                    }}
-                />
-                <SoundOptionsContainer
-                    options={configuration.soundConfiguration ?? {}}
-                    onChange={(next) => {
-                        const nextConfig = { ...configuration, soundConfiguration: next };
-                        setConfiguration(nextConfig);
-                        onConfigurationChange?.(nextConfig);
-                    }}
-                />
+            <View style={localStyles.body}>
+                <Text style={BTCStyles.kicker}>INTERVAL TIMER · SETUP</Text>
+                <Text style={BTCStyles.workoutName}>{(loadedConfigName ?? "New Workout").toUpperCase()}</Text>
+                <View style={[BTCStyles.nameRule, localStyles.nameRuleSpacing]} />
 
-                <IntervalContainer
-                    data={configuration.intervals}
-                    onChange={(next) => {
-                        const nextConfig = { ...configuration, intervals: next };
-                        setConfiguration(nextConfig);
-                        onConfigurationChange?.(nextConfig);
+                <View style={localStyles.section}>
+                    <RoundOptions
+                        numRounds={configuration.numRounds}
+                        onRoundsChanged={(value) => updateConfig({ numRounds: value })}
+                        roundRest={configuration.roundRest}
+                        onRoundRestChanged={(valueMs) => updateConfig({ roundRest: valueMs })}
+                    />
+                </View>
+
+                <View style={localStyles.section}>
+                    <SoundOptionsContainer
+                        options={configuration.soundConfiguration ?? {}}
+                        onChange={(next) => updateConfig({ soundConfiguration: next })}
+                    />
+                </View>
+
+                <View style={localStyles.section}>
+                    <IntervalContainer
+                        data={configuration.intervals}
+                        onChange={(next) => updateConfig({ intervals: next })}
+                    />
+                </View>
+
+                <View style={[BTCStyles.totalBox, localStyles.section]}>
+                    <Text style={BTCStyles.totalLabel}>TOTAL{"\n"}TIME</Text>
+                    <Text style={BTCStyles.totalValue}>{formatTimestamp(calculateTotalConfigurationTime(configuration), false)}</Text>
+                </View>
+
+                <Pressable
+                    style={BTCStyles.start}
+                    onPress={() => {
+                        if (loadedConfigName) {
+                            recordConfigurationUsage(loadedConfigName).catch(() => {});
+                        }
+                        onStart?.(configuration);
                     }}
-                />
-
-                <ThemedText style={styles.timerText}>{
-                    formatTimestamp(calculateTotalConfigurationTime(configuration), false)
-                }</ThemedText>
-
-                <ThemedView style={styles.buttonRow}>
-                    <Pressable
-                        style={[styles.button, styles.buttonClear]}
-                        onPress={() => {
-                            if (loadedConfigName) {
-                                recordConfigurationUsage(loadedConfigName).catch(() => {});
-                            }
-                            onStart?.(configuration);
-                        }}
-                    >
-                        <ThemedText style={styles.buttonText}>Start</ThemedText>
-                    </Pressable>
-                </ThemedView>
-            </ThemedView>
-        </ThemedView>
+                >
+                    <Text style={BTCStyles.startText}>▸ START</Text>
+                </Pressable>
+            </View>
+        </View>
     );
 }
 
 const localStyles = StyleSheet.create({
-    headerRow: {
-        flexDirection: "row",
-        justifyContent: "space-between",
-        alignItems: "center",
-        marginBottom: 12,
-    },
-    headerActions: {
-        flexDirection: "row",
-        gap: 8,
-    },
-    formContent: {
+    screen: {
         flex: 1,
+        backgroundColor: Color.navy,
+    },
+    backSpacer: {
+        width: 42,
+    },
+    nameRuleSpacing: {
+        marginBottom: 20,
+    },
+    toolbarActions: {
+        flexDirection: "row",
+        gap: 9,
+        marginLeft: "auto",
+    },
+    body: {
+        paddingHorizontal: 16,
+        paddingTop: 16,
+        paddingBottom: 24,
+    },
+    section: {
+        marginBottom: 16,
     },
 });

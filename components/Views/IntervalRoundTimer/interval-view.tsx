@@ -1,9 +1,9 @@
 import { DEFAULT_CONFIG } from "@/constants/data-constants";
 import { TimeConfiguration } from "@/data/data-types";
-import mainStyles from "@/styles/main-styles";
+import { Color } from "@/styles/BTCIntervalTimer";
 import { SavedConfiguration } from "@/utils/configuration-storage";
 import React, { useState } from "react";
-import { ThemedView } from "../../themed-view";
+import { StyleSheet, View } from "react-native";
 import IntervalActiveTimer from "./interval-active-view";
 import IntervalSetupView from "./interval-setup-view";
 
@@ -19,7 +19,7 @@ export default function IntervalView({ onBack, initialEntry }: IntervalViewProps
     const [activeConfiguration, setActiveConfiguration] = useState<TimeConfiguration | null>(null);
 
     return (
-        <ThemedView style={mainStyles.screen}>
+        <View style={styles.screen}>
             {activeConfiguration ? (
                 <IntervalActiveTimer
                     data={activeConfiguration}
@@ -35,6 +35,13 @@ export default function IntervalView({ onBack, initialEntry }: IntervalViewProps
                     onBack={onBack}
                 />
             )}
-        </ThemedView>
+        </View>
     );
 }
+
+const styles = StyleSheet.create({
+    screen: {
+        flex: 1,
+        backgroundColor: Color.navy,
+    },
+});

@@ -7,8 +7,12 @@ import { useEffect, useRef, useState } from "react";
 export type Stage = "on" | "off" | "roundRest" | "finished";
 
 export interface IntervalPreview {
+    // 1-based global repeat index, i.e. "INTERVAL {number}" in the UI.
+    number: number;
     on: number;
     off: number;
+    onTotalMs: number;
+    offTotalMs: number;
 }
 
 // A flattened interval entry: `start` is the global repeat index (across all
@@ -270,23 +274,39 @@ export function useIntervalTimer(data: TimeConfiguration) {
 
     // Remaining on/off time for the currently active interval: ticks down
     // the on time first, then the off time, once the on phase is spent.
-    const getCurrentIntervalRemaining = (interval: IntervalData): IntervalPreview => {
+    // Totals are carried alongside so the UI can derive a progress fraction.
+    const getCurrentIntervalRemaining = (interval: IntervalData): Omit<IntervalPreview, "number"> => {
         const elapsed = timeInInterval.current;
+        const onTotalMs = interval.on;
+        const offTotalMs = interval.off;
 
         if (elapsed < interval.on) {
-            return { on: interval.on - elapsed, off: interval.off };
+            return { on: interval.on - elapsed, off: interval.off, onTotalMs, offTotalMs };
         }
 
-        return { on: 0, off: Math.max(interval.on + interval.off - elapsed, 0) };
+        return { on: 0, off: Math.max(interval.on + interval.off - elapsed, 0), onTotalMs, offTotalMs };
     };
 
     // Current and next interval to preview, with the current one's on/off
-    // ticked down to its actual remaining time.
+    // ticked down to its actual remaining time. During round rest,
+    // currentIntervalIndex is already past the end (the round just
+    // finished), so preview from the top instead — the next round always
+    // restarts at interval 0.
+    const previewingNextRound = timerState?.currentStage === "roundRest";
+    const previewIndex = previewingNextRound ? 0 : currentIntervalIndex.current;
+
     const intervalPreview: IntervalPreview[] = [];
-    const current = getIntervalAtIndex(currentIntervalIndex.current);
-    const next = getIntervalAtIndex(currentIntervalIndex.current + 1);
-    if (current) intervalPreview.push(getCurrentIntervalRemaining(current));
-    if (next) intervalPreview.push(next);
+    const current = getIntervalAtIndex(previewIndex);
+    const next = getIntervalAtIndex(previewIndex + 1);
+    if (current) {
+        const totals = previewingNextRound
+            ? { on: current.on, off: current.off, onTotalMs: current.on, offTotalMs: current.off }
+            : getCurrentIntervalRemaining(current);
+        intervalPreview.push({ number: previewIndex + 1, ...totals });
+    }
+    if (next) {
+        intervalPreview.push({ number: previewIndex + 2, on: next.on, off: next.off, onTotalMs: next.on, offTotalMs: next.off });
+    }
 
     return {
         currentStage: timerState?.currentStage,

@@ -1,14 +1,18 @@
 // Sound options editor component
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
+import { WheelPicker } from '@/components/ui/wheel-picker';
 import { sfxNames } from '@/constants/asset-constants';
 import { SoundOptions } from '@/data/data-types';
-import { StyleSheet, TextInput } from 'react-native';
-import { Collapsible } from '../ui/collapsible';
-import { WheelPicker } from '../ui/wheel-picker';
+import { Color, Font, SETUP } from '@/styles/BTCIntervalTimer';
+import { useState } from 'react';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 const NONE_OPTION = 'None';
 const SFX_OPTIONS = [NONE_OPTION, ...sfxNames];
+const WARNING_SECONDS_OPTIONS = Array.from({ length: 31 }, (_, i) => i);
+
+function formatSfxLabel(name: string) {
+	return name.toUpperCase().replace(/[_-]/g, ' ');
+}
 
 interface SoundOptionsProps {
 	options: SoundOptions;
@@ -16,110 +20,155 @@ interface SoundOptionsProps {
 	title?: string;
 }
 
-export default function SoundOptionsContainer({ options, onChange, title = 'Sound Options' }: SoundOptionsProps) {
-    return (
-        <Collapsible
-            title={title}
-            children={useSoundOptions({options, onChange})}>
-        </Collapsible>
+export default function SoundOptionsContainer({ options, onChange, title = 'Sounds & Warnings' }: SoundOptionsProps) {
+	const [isOpen, setIsOpen] = useState(false);
+
+	const setField = <K extends keyof SoundOptions>(key: K, value: SoundOptions[K]) => {
+		onChange({ ...options, [key]: value });
+	};
+
+	const setSfxField = (key: 'roundStartSfx' | 'roundEndSfx' | 'roundEndWarningSfx', value: string) => {
+		setField(key, value === NONE_OPTION ? undefined : value);
+	};
+
+	const setWarningSeconds = (key: 'roundEndWarningMs' | 'restEndWarningMs', seconds: number) => {
+		setField(key, seconds * 1000);
+	};
+
+	return (
+		<View>
+			<Pressable style={styles.disclosureHeader} onPress={() => setIsOpen((value) => !value)}>
+				<Text style={styles.disclosureBullet}>{isOpen ? '▾' : '▸'}</Text>
+				<Text style={styles.disclosureTitle}>{title.toUpperCase()}</Text>
+			</Pressable>
+
+			{isOpen && (
+				<View style={styles.card}>
+					<Row label="Round start SFX">
+						<WheelPicker
+							options={SFX_OPTIONS}
+							value={options?.roundStartSfx ?? NONE_OPTION}
+							onChange={(value) => setSfxField('roundStartSfx', value)}
+							formatOption={formatSfxLabel}
+							renderTrigger={({ displayValue, open }) => <Chip displayValue={displayValue} onPress={open} />}
+						/>
+					</Row>
+
+					<Row label="Round end SFX">
+						<WheelPicker
+							options={SFX_OPTIONS}
+							value={options?.roundEndSfx ?? NONE_OPTION}
+							onChange={(value) => setSfxField('roundEndSfx', value)}
+							formatOption={formatSfxLabel}
+							renderTrigger={({ displayValue, open }) => <Chip displayValue={displayValue} onPress={open} />}
+						/>
+					</Row>
+
+					<Row label="Warning SFX">
+						<WheelPicker
+							options={SFX_OPTIONS}
+							value={options?.roundEndWarningSfx ?? NONE_OPTION}
+							onChange={(value) => setSfxField('roundEndWarningSfx', value)}
+							formatOption={formatSfxLabel}
+							renderTrigger={({ displayValue, open }) => <Chip displayValue={displayValue} onPress={open} />}
+						/>
+					</Row>
+
+					<Row label="Warn before round ends">
+						<WheelPicker
+							options={WARNING_SECONDS_OPTIONS}
+							value={Math.round((options?.roundEndWarningMs ?? 0) / 1000)}
+							onChange={(seconds) => setWarningSeconds('roundEndWarningMs', seconds)}
+							formatOption={(seconds) => `${seconds}S`}
+							renderTrigger={({ displayValue, open }) => <Chip displayValue={displayValue} onPress={open} />}
+						/>
+					</Row>
+
+					<Row label="Sound before rest ends" last>
+						<WheelPicker
+							options={WARNING_SECONDS_OPTIONS}
+							value={Math.round((options?.restEndWarningMs ?? 0) / 1000)}
+							onChange={(seconds) => setWarningSeconds('restEndWarningMs', seconds)}
+							formatOption={(seconds) => `${seconds}S`}
+							renderTrigger={({ displayValue, open }) => <Chip displayValue={displayValue} onPress={open} />}
+						/>
+					</Row>
+				</View>
+			)}
+		</View>
 	);
 }
 
-function useSoundOptions({ options, onChange }: SoundOptionsProps) {
-    const setField = <K extends keyof SoundOptions>(key: K, value: SoundOptions[K]) => {
-        onChange({ ...options, [key]: value });
-    };
+function Row({ label, last, children }: { label: string; last?: boolean; children: React.ReactNode }) {
+	return (
+		<View style={[styles.row, last && styles.rowLast]}>
+			<Text style={styles.rowLabel}>{label}</Text>
+			{children}
+		</View>
+	);
+}
 
-    const setSfxField = (key: 'roundStartSfx' | 'roundEndSfx' | 'roundEndWarningSfx', value: string) => {
-        setField(key, value === NONE_OPTION ? undefined : value);
-    };
-
-    return (
-        <ThemedView style={styles.container}>
-			<ThemedView style={styles.fieldContainer}>
-				<ThemedText style={styles.label}>Round Start SFX</ThemedText>
-				<WheelPicker
-					options={SFX_OPTIONS}
-					value={options?.roundStartSfx ?? NONE_OPTION}
-					onChange={(value) => setSfxField('roundStartSfx', value)}
-				/>
-			</ThemedView>
-
-			<ThemedView style={styles.fieldContainer}>
-				<ThemedText style={styles.label}>Round End SFX</ThemedText>
-				<WheelPicker
-					options={SFX_OPTIONS}
-					value={options?.roundEndSfx ?? NONE_OPTION}
-					onChange={(value) => setSfxField('roundEndSfx', value)}
-				/>
-			</ThemedView>
-
-			<ThemedView style={styles.fieldContainer}>
-				<ThemedText style={styles.label}>Round End Warning SFX</ThemedText>
-				<WheelPicker
-					options={SFX_OPTIONS}
-					value={options?.roundEndWarningSfx ?? NONE_OPTION}
-					onChange={(value) => setSfxField('roundEndWarningSfx', value)}
-				/>
-			</ThemedView>
-
-			<ThemedView style={styles.row}>
-				<ThemedView style={styles.fieldSplit}>
-					<ThemedText style={styles.label}>Round End Warning</ThemedText>
-					<TextInput
-						style={styles.input}
-						value={String((options?.roundEndWarningMs ?? 0) / 1000)}
-						keyboardType="numeric"
-						onChangeText={(txt) => {
-							const v = parseInt(txt, 10);
-							setField('roundEndWarningMs', Number.isNaN(v) ? undefined : v * 1000);
-						}}
-					/>
-				</ThemedView>
-
-				<ThemedView style={[styles.fieldSplit, styles.fieldSplitLast]}>
-					<ThemedText style={styles.label}>Rest End Warning</ThemedText>
-					<TextInput
-						style={styles.input}
-						value={String((options?.restEndWarningMs ?? 0) / 1000)}
-						keyboardType="numeric"
-						onChangeText={(txt) => {
-							const v = parseInt(txt, 10);
-							setField('restEndWarningMs', Number.isNaN(v) ? undefined : v * 1000);
-						}}
-					/>
-				</ThemedView>
-			</ThemedView>
-		</ThemedView>
-    )
+function Chip({ displayValue, onPress }: { displayValue: string; onPress: () => void }) {
+	return (
+		<Pressable style={styles.chip} onPress={onPress}>
+			<Text style={styles.chipText}>{displayValue}</Text>
+		</Pressable>
+	);
 }
 
 const styles = StyleSheet.create({
-	container: {
-		width: '100%',
+	disclosureHeader: {
+		flexDirection: 'row',
+		alignItems: 'center',
+		gap: 9,
+		paddingVertical: 9,
 	},
-	fieldContainer: {
-		marginBottom: 12,
+	disclosureBullet: {
+		color: Color.orange,
+		fontSize: 13,
 	},
-	label: {
-		fontSize: 14,
-		marginBottom: 6,
+	disclosureTitle: {
+		fontFamily: Font.oswaldSemi,
+		fontSize: 13,
+		letterSpacing: 1.5,
+		color: Color.white,
 	},
-	input: {
+	card: {
+		backgroundColor: '#0f1c3c',
 		borderWidth: 1,
-		borderColor: '#ccc',
-		borderRadius: 6,
-		padding: 10,
-		fontSize: 16,
+		borderColor: SETUP.chipBorder,
+		borderRadius: 10,
+		padding: 12,
+		marginBottom: 4,
 	},
 	row: {
 		flexDirection: 'row',
+		alignItems: 'center',
+		justifyContent: 'space-between',
+		paddingVertical: 10,
+		borderBottomWidth: 1,
+		borderBottomColor: '#21376a',
 	},
-	fieldSplit: {
-		flex: 1,
-		marginRight: 12,
+	rowLast: {
+		borderBottomWidth: 0,
 	},
-	fieldSplitLast: {
-		marginRight: 0,
+	rowLabel: {
+		fontFamily: Font.barlowSemi,
+		fontSize: 13,
+		color: SETUP.label,
+	},
+	chip: {
+		backgroundColor: SETUP.chip,
+		borderWidth: 1,
+		borderColor: SETUP.chipBorder,
+		borderRadius: 5,
+		paddingVertical: 6,
+		paddingHorizontal: 12,
+	},
+	chipText: {
+		fontFamily: Font.oswaldSemi,
+		fontSize: 13,
+		letterSpacing: 1,
+		color: Color.white,
 	},
 });
