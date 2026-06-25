@@ -42,8 +42,8 @@ export const landingStyles = StyleSheet.create({
   statusText: { fontFamily: Font.mono, fontSize: 10, color: '#6f7da8' },
 
   // logo — faded oval mask is applied on the <Image> itself
-  logoWrap: { alignItems: 'center', justifyContent: 'center', paddingTop: 8, paddingBottom: 2, paddingHorizontal: 18 },
-  logo: { width: 210, height: undefined, aspectRatio: 2.4, resizeMode: 'contain' },
+  logoWrap: { alignItems: 'center', justifyContent: 'center', paddingBottom: 2 },
+  logo: { width: 210, aspectRatio: 2.4, resizeMode: 'contain' },
 
   // recommended row
   recoBlock: { paddingHorizontal: 18, paddingTop: 20 },
@@ -73,7 +73,7 @@ export const landingStyles = StyleSheet.create({
 
   // footer
   footer: { marginTop: 'auto', paddingHorizontal: 18, paddingTop: 20, paddingBottom: 16 },
-  footerUrl: { fontFamily: Font.oswaldMed, fontSize: 13, letterSpacing: 1.5, color: '#6f7da8', textAlign: 'center', textTransform: 'uppercase', marginBottom: 12 },
+  footerUrl: { fontFamily: Font.oswaldMed, fontSize: 13, letterSpacing: 1.5, color: '#6f7da8', textAlign: 'center', textTransform: 'uppercase', marginBottom: 12, textDecorationLine: 'underline' },
   bannerAd: { height: 52, borderWidth: 1, borderColor: '#3a4f80', borderStyle: 'dashed', borderRadius: 4, alignItems: 'center', justifyContent: 'center' },
   bannerAdText: { fontFamily: Font.mono, fontSize: 10, color: '#5469a0' },
 });

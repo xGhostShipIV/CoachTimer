@@ -171,7 +171,7 @@ export const BTCStyles = StyleSheet.create({
   stopText: { fontFamily: Font.oswaldBold, fontSize: 26, letterSpacing: 3 },
 
   // ---- setup ----
-  toolbar: { flexDirection: 'row', alignItems: 'center', gap: 9, paddingHorizontal: 16, paddingTop: 13 },
+  toolbar: { flexDirection: 'row', alignItems: 'center', gap: 9, paddingHorizontal: 16 },
   toolBack: { width: 42, height: 42, alignItems: 'center', justifyContent: 'center', backgroundColor: SETUP.chip, borderWidth: 1, borderColor: SETUP.chipBorder, borderRadius: 7 },
   toolBackGlyph: { fontFamily: Font.oswaldSemi, fontSize: 24, color: Color.white },
   toolChip: { height: 42, minWidth: 64, paddingHorizontal: 15, alignItems: 'center', justifyContent: 'center', backgroundColor: SETUP.chip, borderWidth: 1, borderColor: SETUP.chipBorder, borderRadius: 7 },

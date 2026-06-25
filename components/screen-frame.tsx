@@ -1,7 +1,7 @@
 import { Color } from "@/styles/BTCIntervalTimer";
 import { scrollFocusedInputIntoView } from "@/utils/scroll-focused-input-into-view";
 import { createContext, PropsWithChildren, useContext, useEffect, useRef, useState } from "react";
-import { Keyboard, KeyboardAvoidingView, Platform, StyleSheet, View } from "react-native";
+import { Keyboard, StyleSheet, View } from "react-native";
 // gesture-handler's ScrollView negotiates with nested Pressables/TextInputs
 // far better than the core ScrollView, which otherwise loses the gesture to
 // whatever touchable the drag happens to start on. The tradeoff: it doesn't
@@ -53,20 +53,15 @@ export function ScreenFrame({ children }: PropsWithChildren) {
 
     return (
         <ScreenBackgroundContext.Provider value={setBackground}>
-            <View style={[styles.frame, { paddingTop: insets.top, backgroundColor: background ?? Color.white }]}>
-                <KeyboardAvoidingView
+            <View style={[styles.frame, { paddingTop: insets.top, backgroundColor: background ?? Color.navy }]}>
+                <ScrollView
+                    ref={scrollRef}
                     style={{ flex: 1 }}
-                    behavior={Platform.OS === "ios" ? "padding" : "height"}
+                    contentContainerStyle={{ flexGrow: 1 }}
+                    keyboardShouldPersistTaps="handled"
                 >
-                    <ScrollView
-                        ref={scrollRef}
-                        style={{ flex: 1 }}
-                        contentContainerStyle={{ flexGrow: 1 }}
-                        keyboardShouldPersistTaps="handled"
-                    >
-                        {children}
-                    </ScrollView>
-                </KeyboardAvoidingView>
+                    {children}
+                </ScrollView>
             </View>
         </ScreenBackgroundContext.Provider>
     );

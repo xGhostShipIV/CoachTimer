@@ -20,21 +20,19 @@ export default function IntervalView({ onBack, initialEntry }: IntervalViewProps
 
     return (
         <View style={styles.screen}>
-            {activeConfiguration ? (
+            {activeConfiguration ?
                 <IntervalActiveTimer
                     data={activeConfiguration}
                     onFinish={() => setActiveConfiguration(null)}
                     onStop={() => setActiveConfiguration(null)}
-                />
-            ) : (
+                /> :
                 <IntervalSetupView
                     initialConfiguration={configuration}
                     initialConfigName={initialEntry?.name}
                     onConfigurationChange={setConfiguration}
                     onStart={(cfg) => setActiveConfiguration(cfg)}
                     onBack={onBack}
-                />
-            )}
+                />}
         </View>
     );
 }

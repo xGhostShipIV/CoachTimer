@@ -1,4 +1,3 @@
-import { BackButton, LoadTimerButton, SaveTimerButton } from "@/components/timer-action-buttons";
 import { DEFAULT_CONFIG } from "@/constants/data-constants";
 import { TimeConfiguration } from "@/data/data-types";
 import { BTCStyles, Color } from "@/styles/BTCIntervalTimer";
@@ -36,28 +35,7 @@ export default function IntervalSetupView({ initialConfiguration, initialConfigN
     };
 
     return (
-        <View style={localStyles.screen}>
-            <View style={BTCStyles.toolbar}>
-                {onBack ? <BackButton onPress={onBack} style={BTCStyles.toolBack} /> : <View style={localStyles.backSpacer} />}
-
-                <View style={localStyles.toolbarActions}>
-                    <LoadTimerButton
-                        onLoad={(entry) => {
-                            setConfiguration(entry.configuration);
-                            onConfigurationChange?.(entry.configuration);
-                            setLoadedConfigName(entry.name);
-                        }}
-                        triggerStyle={BTCStyles.toolChip}
-                        triggerTextStyle={BTCStyles.toolChipText}
-                    />
-                    <SaveTimerButton
-                        configuration={configuration}
-                        triggerStyle={BTCStyles.toolChip}
-                        triggerTextStyle={BTCStyles.toolChipText}
-                    />
-                </View>
-            </View>
-
+        <>
             <View style={localStyles.body}>
                 <Text style={BTCStyles.kicker}>INTERVAL TIMER · SETUP</Text>
                 <Text style={BTCStyles.workoutName}>{(loadedConfigName ?? "New Workout").toUpperCase()}</Text>
@@ -103,7 +81,7 @@ export default function IntervalSetupView({ initialConfiguration, initialConfigN
                     <Text style={BTCStyles.startText}>▸ START</Text>
                 </Pressable>
             </View>
-        </View>
+        </>
     );
 }
 

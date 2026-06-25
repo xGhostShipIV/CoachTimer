@@ -105,6 +105,7 @@ export default function IntervalActiveTimer({ data, onFinish, onStop }: ActiveTi
 
 const styles = StyleSheet.create({
     screen: {
+        position: 'absolute',
         top: 0,
         left: 0,
         right: 0,
