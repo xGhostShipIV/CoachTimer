@@ -1,24 +1,20 @@
 import { BackButton } from "@/components/timer-action-buttons";
-import mainStyles from "@/styles/main-styles";
+import { BTCStyles, Color } from "@/styles/BTCIntervalTimer";
 import { useCallback, useRef, useState } from "react";
-import { Pressable } from "react-native";
+import { Pressable, StyleSheet, Text, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import NotificationContainer from "../Notifications/notification-container";
-import { ThemedText } from "../themed-text";
-import { ThemedView } from "../themed-view";
-import { styles } from "../Timer/time-keeper-styles";
 import { TimeText } from "../Timer/time-text";
-
-// Now I can create and edit notifications.
-// How can I connect my elapsed time, to the execution of our notifications?
 
 interface StopwatchViewProps {
     onBack?: () => void;
 }
 
 export function StopwatchView({ onBack }: StopwatchViewProps) {
+    const insets = useSafeAreaInsets();
     const [isPaused, setIsPaused] = useState(true);
     const [resetSignal, setResetSignal] = useState(0);
-    const notificationTickRef = useRef<(delta: number) => void>(() => {});
+    const notificationTickRef = useRef<(delta: number) => void>(() => { });
 
     const handleTick = useCallback((delta: number) => {
         notificationTickRef.current(delta);
@@ -34,42 +30,71 @@ export function StopwatchView({ onBack }: StopwatchViewProps) {
     };
 
     return (
-        <ThemedView style={[mainStyles.container, styles.container]}>
-            {onBack && <BackButton onPress={onBack} style={{ alignSelf: "flex-start", marginBottom: 12 }} />}
+        <View style={styles.screen}>
+            <View style={[BTCStyles.toolbar, { paddingLeft: 0 }]}>
+                {onBack && <BackButton onPress={onBack} style={BTCStyles.toolBack} />}
+            </View>
 
-            <NotificationContainer
-                tickHandlerRef={notificationTickRef}
-                resetSignal={resetSignal}
-            />
-            <ThemedText type="title" style={styles.labelText}>
-                Elapsed Time
-            </ThemedText>
+            <View style={{ paddingTop: 22 }}>
+                <NotificationContainer
+                    tickHandlerRef={notificationTickRef}
+                    resetSignal={resetSignal}
+                />
+            </View>
 
-            <TimeText
-                isPaused={isPaused}
-                showMilliseconds={true}
-                resetSignal={resetSignal}
-                onTick={handleTick}
-            />
+            <View style={[styles.heroBlock, { flex: 1 }]}>
+                <Text style={[BTCStyles.heroLabel, styles.heroLabel, { marginBottom: 8 }]}>ELAPSED TIME</Text>
+                <View style={{ justifyContent: 'center', alignContent: 'center', flexGrow: 1 }}>
+                    <TimeText
+                        isPaused={isPaused}
+                        showMilliseconds={true}
+                        resetSignal={resetSignal}
+                        onTick={handleTick}
+                        style={[BTCStyles.hero, styles.heroValue, { fontSize: 60 }]}
+                    />
+                </View>
+            </View>
 
-            <ThemedView style={styles.buttonRow}>
-                <Pressable
-                    style={[
-                        styles.button,
-                        isPaused ? styles.buttonPaused : styles.buttonRunning,
-                        styles.buttonMargin,
-                    ]}
-                    onPress={togglePause}
-                >
-                    <ThemedText style={styles.buttonText}>
-                        {isPaused ? 'Resume' : 'Pause'}
-                    </ThemedText>
+
+            <View style={styles.actions}>
+                <Pressable style={BTCStyles.start} onPress={togglePause}>
+                    <Text style={BTCStyles.startText}>{isPaused ? "▸ START" : "‖ PAUSE"}</Text>
                 </Pressable>
 
-                <Pressable style={[styles.button, styles.buttonClear]} onPress={clearTimer}>
-                    <ThemedText style={styles.buttonText}>Stop / Clear</ThemedText>
+                <Pressable style={[BTCStyles.stop, styles.stopButton]} onPress={clearTimer}>
+                    <Text style={[BTCStyles.stopGlyph, styles.stopColor]}>▪</Text>
+                    <Text style={[BTCStyles.stopText, styles.stopColor]}>STOP / CLEAR</Text>
                 </Pressable>
-            </ThemedView>
-        </ThemedView>
+            </View>
+        </View>
     );
 }
+
+const styles = StyleSheet.create({
+    screen: {
+        flex: 1,
+        backgroundColor: Color.navy,
+        paddingHorizontal: 18,
+    },
+    heroBlock: {
+        marginTop: 28,
+        marginBottom: 28,
+    },
+    heroLabel: {
+        color: '#7e8cb6',
+    },
+    heroValue: {
+        color: Color.white,
+    },
+    actions: {
+        gap: 11,
+        marginBottom: 18,
+    },
+    stopButton: {
+        backgroundColor: '#16213f',
+        borderColor: '#34406a',
+    },
+    stopColor: {
+        color: '#cdd6ec',
+    },
+});

@@ -4,6 +4,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import IntervalView from '@/components/Views/IntervalRoundTimer/interval-view';
 import LandingScreen from '@/components/Views/LandingScreen/LandingScreenView';
+import { StopwatchView } from '@/components/Views/StopWatchView';
 import { Color } from '@/styles/BTCIntervalTimer';
 import { SavedConfiguration } from '@/utils/configuration-storage';
 
@@ -26,6 +27,10 @@ export default function HomeScreen() {
             onBack={() => setActiveView(undefined)}
             initialEntryState={loadedPreset}
         />;
+    } else if (activeView == 'stopwatch') {
+        content = <StopwatchView 
+            onBack={() => setActiveView(undefined)}
+        />
     }
 
     return (

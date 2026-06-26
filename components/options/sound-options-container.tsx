@@ -2,9 +2,9 @@
 import { WheelPicker } from '@/components/ui/wheel-picker';
 import { sfxNames } from '@/constants/asset-constants';
 import { SoundOptions } from '@/data/data-types';
-import { Color, Font, SETUP } from '@/styles/BTCIntervalTimer';
+import { BTCStyles } from '@/styles/BTCIntervalTimer';
 import { useState } from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, Text, View } from 'react-native';
 
 const NONE_OPTION = 'None';
 const SFX_OPTIONS = [NONE_OPTION, ...sfxNames];
@@ -37,13 +37,13 @@ export default function SoundOptionsContainer({ options, onChange, title = 'Soun
 
 	return (
 		<View>
-			<Pressable style={styles.disclosureHeader} onPress={() => setIsOpen((value) => !value)}>
-				<Text style={styles.disclosureBullet}>{isOpen ? '▾' : '▸'}</Text>
-				<Text style={styles.disclosureTitle}>{title.toUpperCase()}</Text>
+			<Pressable style={BTCStyles.disclosureHeader} onPress={() => setIsOpen((value) => !value)}>
+				<Text style={BTCStyles.disclosureBullet}>{isOpen ? '▾' : '▸'}</Text>
+				<Text style={BTCStyles.disclosureTitle}>{title.toUpperCase()}</Text>
 			</Pressable>
 
 			{isOpen && (
-				<View style={styles.card}>
+				<View style={BTCStyles.disclosureCard}>
 					<Row label="Start SFX">
 						<WheelPicker
 							options={SFX_OPTIONS}
@@ -101,8 +101,8 @@ export default function SoundOptionsContainer({ options, onChange, title = 'Soun
 
 function Row({ label, last, children }: { label: string; last?: boolean; children: React.ReactNode }) {
 	return (
-		<View style={[styles.row, last && styles.rowLast]}>
-			<Text style={styles.rowLabel}>{label}</Text>
+		<View style={[BTCStyles.disclosureRow, last && BTCStyles.disclosureRowLast]}>
+			<Text style={BTCStyles.disclosureRowLabel}>{label}</Text>
 			{children}
 		</View>
 	);
@@ -110,68 +110,8 @@ function Row({ label, last, children }: { label: string; last?: boolean; childre
 
 function Chip({ displayValue, onPress }: { displayValue: string; onPress: () => void }) {
 	return (
-		<Pressable style={styles.chip} onPress={onPress}>
-			<Text style={styles.chipText} numberOfLines={1}>{displayValue}</Text>
+		<Pressable style={BTCStyles.disclosureChip} onPress={onPress}>
+			<Text style={BTCStyles.disclosureChipText} numberOfLines={1}>{displayValue}</Text>
 		</Pressable>
 	);
 }
-
-const styles = StyleSheet.create({
-	disclosureHeader: {
-		flexDirection: 'row',
-		alignItems: 'center',
-		gap: 9,
-		paddingVertical: 9,
-	},
-	disclosureBullet: {
-		color: Color.orange,
-		fontSize: 13,
-	},
-	disclosureTitle: {
-		fontFamily: Font.oswaldSemi,
-		fontSize: 13,
-		letterSpacing: 1.5,
-		color: Color.white,
-	},
-	card: {
-		backgroundColor: '#0f1c3c',
-		borderWidth: 1,
-		borderColor: SETUP.chipBorder,
-		borderRadius: 10,
-		padding: 12,
-		marginBottom: 4,
-	},
-	row: {
-		flexDirection: 'row',
-		alignItems: 'center',
-		justifyContent: 'space-between',
-		paddingVertical: 10,
-		borderBottomWidth: 1,
-		borderBottomColor: '#21376a',
-	},
-	rowLast: {
-		borderBottomWidth: 0,
-	},
-	rowLabel: {
-		fontFamily: Font.barlowSemi,
-		fontSize: 13,
-		color: SETUP.label,
-	},
-	chip: {
-		width: 140,
-		alignItems: 'center',
-		backgroundColor: SETUP.chip,
-		borderWidth: 1,
-		borderColor: SETUP.chipBorder,
-		borderRadius: 5,
-		paddingVertical: 6,
-		paddingHorizontal: 12,
-	},
-	chipText: {
-		fontFamily: Font.oswaldSemi,
-		fontSize: 13,
-		letterSpacing: 1,
-		color: Color.white,
-		textAlign: 'center',
-	},
-});

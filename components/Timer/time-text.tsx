@@ -1,6 +1,6 @@
 import { formatTimestamp } from "@/utils/time-utils";
 import { useEffect, useRef, useState } from "react";
-import { ThemedText } from "../themed-text";
+import { StyleProp, Text, TextStyle } from "react-native";
 import { styles } from "./time-keeper-styles";
 
 interface TimeTextProps {
@@ -14,6 +14,8 @@ interface TimeTextProps {
     resetSignal?: number;
     /** Optional countdown start time in milliseconds. */
     countdownFrom?: number;
+    /** Overrides the default timer text style entirely (caller owns color/size). */
+    style?: StyleProp<TextStyle>;
 }
 
 export function TimeText({
@@ -22,6 +24,7 @@ export function TimeText({
     onTick,
     resetSignal = 0,
     countdownFrom,
+    style,
 }: TimeTextProps) {
     const [elapsedTime, setElapsedTime] = useState(countdownFrom ?? 0);
     const accumulatedRef = useRef(0);
@@ -104,8 +107,8 @@ export function TimeText({
     }, [resetSignal, countdownFrom, onTick]);
 
     return (
-        <ThemedText style={styles.timerText}>
+        <Text style={style ?? styles.timerText}>
             {formatTimestamp(elapsedTime, showMilliseconds)}
-        </ThemedText>
+        </Text>
     );
 }

@@ -194,6 +194,18 @@ export const BTCStyles = StyleSheet.create({
   soundRow: { flexDirection: 'row', alignItems: 'center', gap: 10, backgroundColor: '#16264c', borderWidth: 1, borderColor: SETUP.chipBorder, borderRadius: 6, padding: 12, paddingHorizontal: 13 },
   soundText: { fontFamily: Font.oswaldSemi, fontSize: 14, letterSpacing: 1.5, color: Color.white },
 
+  // collapsible "disclosure" options card — shared by SoundOptionsContainer
+  // and NotificationContainer (label/chip row that opens a wheel picker).
+  disclosureHeader: { flexDirection: 'row', alignItems: 'center', gap: 9, paddingVertical: 9 },
+  disclosureBullet: { color: Color.orange, fontSize: 13 },
+  disclosureTitle: { fontFamily: Font.oswaldSemi, fontSize: 13, letterSpacing: 1.5, color: Color.white },
+  disclosureCard: { backgroundColor: '#0f1c3c', borderWidth: 1, borderColor: SETUP.chipBorder, borderRadius: 10, padding: 12, marginBottom: 4 },
+  disclosureRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingVertical: 10, borderBottomWidth: 1, borderBottomColor: '#21376a' },
+  disclosureRowLast: { borderBottomWidth: 0 },
+  disclosureRowLabel: { fontFamily: Font.barlowSemi, fontSize: 13, color: SETUP.label },
+  disclosureChip: { width: 140, alignItems: 'center', backgroundColor: SETUP.chip, borderWidth: 1, borderColor: SETUP.chipBorder, borderRadius: 5, paddingVertical: 6, paddingHorizontal: 12 },
+  disclosureChipText: { fontFamily: Font.oswaldSemi, fontSize: 13, letterSpacing: 1, color: Color.white, textAlign: 'center' },
+
   intervalsBox: { backgroundColor: '#0f1c3c', borderWidth: 1, borderColor: SETUP.chipBorder, borderRadius: 10, padding: 12 },
   intervalsHead: { flexDirection: 'row', alignItems: 'center', gap: 9, marginBottom: 11 },
   intervalsTitle: { fontFamily: Font.oswaldBold, fontSize: 16, letterSpacing: 2, color: Color.white },
