@@ -44,7 +44,7 @@ export default function SoundOptionsContainer({ options, onChange, title = 'Soun
 
 			{isOpen && (
 				<View style={styles.card}>
-					<Row label="Round start SFX">
+					<Row label="Start SFX">
 						<WheelPicker
 							options={SFX_OPTIONS}
 							value={options?.roundStartSfx ?? NONE_OPTION}
@@ -54,7 +54,7 @@ export default function SoundOptionsContainer({ options, onChange, title = 'Soun
 						/>
 					</Row>
 
-					<Row label="Round end SFX">
+					<Row label="End SFX">
 						<WheelPicker
 							options={SFX_OPTIONS}
 							value={options?.roundEndSfx ?? NONE_OPTION}
@@ -64,7 +64,7 @@ export default function SoundOptionsContainer({ options, onChange, title = 'Soun
 						/>
 					</Row>
 
-					<Row label="Warning SFX">
+					<Row label="End Warning SFX">
 						<WheelPicker
 							options={SFX_OPTIONS}
 							value={options?.roundEndWarningSfx ?? NONE_OPTION}
@@ -74,7 +74,7 @@ export default function SoundOptionsContainer({ options, onChange, title = 'Soun
 						/>
 					</Row>
 
-					<Row label="Warn before round ends">
+					<Row label="Round End Notice">
 						<WheelPicker
 							options={WARNING_SECONDS_OPTIONS}
 							value={Math.round((options?.roundEndWarningMs ?? 0) / 1000)}
@@ -84,7 +84,7 @@ export default function SoundOptionsContainer({ options, onChange, title = 'Soun
 						/>
 					</Row>
 
-					<Row label="Sound before rest ends" last>
+					<Row label="Rest End Notice" last>
 						<WheelPicker
 							options={WARNING_SECONDS_OPTIONS}
 							value={Math.round((options?.restEndWarningMs ?? 0) / 1000)}
@@ -111,7 +111,7 @@ function Row({ label, last, children }: { label: string; last?: boolean; childre
 function Chip({ displayValue, onPress }: { displayValue: string; onPress: () => void }) {
 	return (
 		<Pressable style={styles.chip} onPress={onPress}>
-			<Text style={styles.chipText}>{displayValue}</Text>
+			<Text style={styles.chipText} numberOfLines={1}>{displayValue}</Text>
 		</Pressable>
 	);
 }
@@ -158,6 +158,8 @@ const styles = StyleSheet.create({
 		color: SETUP.label,
 	},
 	chip: {
+		width: 140,
+		alignItems: 'center',
 		backgroundColor: SETUP.chip,
 		borderWidth: 1,
 		borderColor: SETUP.chipBorder,
@@ -170,5 +172,6 @@ const styles = StyleSheet.create({
 		fontSize: 13,
 		letterSpacing: 1,
 		color: Color.white,
+		textAlign: 'center',
 	},
 });

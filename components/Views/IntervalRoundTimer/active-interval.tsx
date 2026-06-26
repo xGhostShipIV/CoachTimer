@@ -11,13 +11,16 @@ interface IntervalBlockProps {
     // Which segment is currently live; null when nothing is running yet
     // (e.g. previewing the next round's first interval during round rest).
     activePhase: "on" | "off" | null;
+    // True for intervals still queued behind the current one — renders both
+    // segments in the dimmer pending tone instead of their normal idle tone.
+    isPending?: boolean;
 }
 
 // The two-tone stacked ON/OFF card for the interval currently in play. The
 // segment matching `activePhase` reads big and vivid (white for ON, orange
 // for OFF) with a progress fill; the other segment dims to its idle tone.
 // The OFF segment is omitted entirely when its total is 0 (no rest).
-export default function IntervalBlock({ number, onRemainingMs, onTotalMs, offRemainingMs, offTotalMs, activePhase }: IntervalBlockProps) {
+export default function IntervalBlock({ number, onRemainingMs, onTotalMs, offRemainingMs, offTotalMs, activePhase, isPending }: IntervalBlockProps) {
     const onDone = activePhase !== null && onRemainingMs <= 0;
     const onProgress = onTotalMs > 0 ? 1 - onRemainingMs / onTotalMs : 0;
     const offProgress = offTotalMs > 0 ? 1 - offRemainingMs / offTotalMs : 0;
@@ -33,8 +36,8 @@ export default function IntervalBlock({ number, onRemainingMs, onTotalMs, offRem
                 progressFillColor={Color.orange}
                 activeBg={SegmentTone.onActiveBg}
                 activeText={SegmentTone.onActiveText}
-                idleBg={SegmentTone.onIdleBg}
-                idleText={SegmentTone.onIdleText}
+                idleBg={isPending ? SegmentTone.pendingBg : SegmentTone.onIdleBg}
+                idleText={isPending ? SegmentTone.pendingText : SegmentTone.onIdleText}
             />
 
             {offTotalMs > 0 && (
@@ -46,8 +49,8 @@ export default function IntervalBlock({ number, onRemainingMs, onTotalMs, offRem
                     progressFillColor="#FFFFFF"
                     activeBg={SegmentTone.offActiveBg}
                     activeText={SegmentTone.offActiveText}
-                    idleBg={SegmentTone.offIdleBg}
-                    idleText={SegmentTone.offIdleText}
+                    idleBg={isPending ? SegmentTone.pendingBg : SegmentTone.offIdleBg}
+                    idleText={isPending ? SegmentTone.pendingText : SegmentTone.offIdleText}
                 />
             )}
         </View>

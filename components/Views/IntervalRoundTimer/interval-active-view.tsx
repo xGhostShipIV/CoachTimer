@@ -50,43 +50,45 @@ export default function IntervalActiveTimer({ data, onFinish, onStop }: ActiveTi
     useScreenBackground(palette.screen);
 
     return (
-        <View style={[styles.screen, { backgroundColor: palette.screen }]}>
-            <ScrollView style={styles.scroll} contentContainerStyle={styles.body}>
-                <View style={BTCStyles.roundRow}>
-                    <Text style={[BTCStyles.roundLabel, { color: palette.roundLabel }]}>ROUND</Text>
-                    <Text style={[BTCStyles.roundNum, { color: palette.roundNum }]}>{pad2(roundCount)}</Text>
-                    <Text style={[BTCStyles.roundSlash, { color: palette.roundSlash }]}>{`/ ${pad2(data.numRounds)}`}</Text>
-                </View>
+        <View style={[styles.screen, { backgroundColor: palette.screen, paddingHorizontal: 18 }]}>
+            <View style={BTCStyles.roundRow}>
+                <Text style={[BTCStyles.roundLabel, { color: palette.roundLabel }]}>ROUND</Text>
+                <Text style={[BTCStyles.roundNum, { color: palette.roundNum }]}>{pad2(roundCount)}</Text>
+                <Text style={[BTCStyles.roundSlash, { color: palette.roundSlash }]}>{`/ ${pad2(data.numRounds)}`}</Text>
+            </View>
 
-                <View style={styles.heroBlock}>
-                    <Text style={[BTCStyles.heroLabel, { color: palette.heroLabel }]}>
-                        {isRoundRest ? "ROUND REST" : "ROUND REMAINING"}
-                    </Text>
-                    <Text style={[BTCStyles.hero, { color: palette.hero }]}>
-                        {formatMinutesSeconds(timeRemainingMS ?? 0)}
-                    </Text>
-                </View>
+            <View style={styles.heroBlock}>
+                <Text style={[BTCStyles.heroLabel, { color: palette.heroLabel }]}>
+                    {isRoundRest ? "ROUND REST" : "ROUND REMAINING"}
+                </Text>
+                <Text style={[BTCStyles.hero, { color: palette.hero }]}>
+                    {formatMinutesSeconds(timeRemainingMS ?? 0)}
+                </Text>
+            </View>
 
-                <View style={[BTCStyles.phaseStrip, { backgroundColor: palette.stripBg }]}>
-                    <View style={[BTCStyles.phaseDot, { backgroundColor: palette.stripDot }]} />
-                    <Text style={[BTCStyles.phaseLabel, { color: palette.stripText }]}>
-                        {isRoundRest ? "ROUND REST" : activePhase === "off" ? "RECOVER" : "WORK"}
-                    </Text>
-                    {noRest && <Text style={[BTCStyles.phaseTag, { color: palette.stripTagText }]}>NO REST</Text>}
-                </View>
+            <View style={[BTCStyles.phaseStrip, { backgroundColor: palette.stripBg }]}>
+                <View style={[BTCStyles.phaseDot, { backgroundColor: palette.stripDot }]} />
+                <Text style={[BTCStyles.phaseLabel, { color: palette.stripText }]}>
+                    {isRoundRest ? "ROUND REST" : activePhase === "off" ? "RECOVER" : "WORK"}
+                </Text>
+                {noRest && <Text style={[BTCStyles.phaseTag, { color: palette.stripTagText }]}>NO REST</Text>}
+            </View>
 
-                {isRoundRest && (
-                    <View style={BTCStyles.upNextCard}>
-                        <Text style={BTCStyles.upNextKicker}>UP NEXT</Text>
-                        <View style={styles.upNextRow}>
-                            <Text style={BTCStyles.upNextRound}>{`ROUND ${pad2(roundCount + 1)}`}</Text>
-                            <Text style={BTCStyles.upNextSlash}>{`/ ${pad2(data.numRounds)}`}</Text>
-                        </View>
+            {isRoundRest && (
+                <View style={BTCStyles.upNextCard}>
+                    <Text style={BTCStyles.upNextKicker}>UP NEXT</Text>
+                    <View style={styles.upNextRow}>
+                        <Text style={BTCStyles.upNextRound}>{`ROUND ${pad2(roundCount + 1)}`}</Text>
+                        <Text style={BTCStyles.upNextSlash}>{`/ ${pad2(data.numRounds)}`}</Text>
                     </View>
-                )}
+                </View>
+            )}
 
-                <ActiveIntervalStack intervals={intervalPreview} activePhase={activePhase} fadeToColor={palette.screen} />
-            </ScrollView>
+            <View style={{flex: 1}}>
+                <ScrollView style={styles.scroll} contentContainerStyle={styles.body}>
+                    <ActiveIntervalStack intervals={intervalPreview} activePhase={activePhase} fadeToColor={palette.screen} />
+                </ScrollView>
+            </View>
 
             <Pressable
                 style={[
@@ -113,15 +115,16 @@ const styles = StyleSheet.create({
     },
     scroll: {
         flex: 1,
+        overflow: 'hidden'
     },
     body: {
-        paddingHorizontal: 18,
         paddingTop: 18,
         paddingBottom: 12,
         gap: 18,
     },
     heroBlock: {
         marginTop: -4,
+        marginBottom: 8
     },
     upNextRow: {
         flexDirection: "row",

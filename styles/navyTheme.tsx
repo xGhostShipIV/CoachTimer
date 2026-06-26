@@ -43,7 +43,7 @@ export const landingStyles = StyleSheet.create({
 
   // logo — faded oval mask is applied on the <Image> itself
   logoWrap: { alignItems: 'center', justifyContent: 'center', paddingBottom: 2 },
-  logo: { width: 210, aspectRatio: 2.4, resizeMode: 'contain' },
+  logo: { width: 210, height: undefined, aspectRatio: 2.4, resizeMode: 'contain' },
 
   // recommended row
   recoBlock: { paddingHorizontal: 18, paddingTop: 20 },

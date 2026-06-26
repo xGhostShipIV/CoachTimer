@@ -287,25 +287,26 @@ export function useIntervalTimer(data: TimeConfiguration) {
         return { on: 0, off: Math.max(interval.on + interval.off - elapsed, 0), onTotalMs, offTotalMs };
     };
 
-    // Current and next interval to preview, with the current one's on/off
-    // ticked down to its actual remaining time. During round rest,
-    // currentIntervalIndex is already past the end (the round just
-    // finished), so preview from the top instead — the next round always
-    // restarts at interval 0.
+    // Current interval to preview (ticked down to its actual remaining
+    // time), followed by every other interval still left in the round.
+    // During round rest, currentIntervalIndex is already past the end (the
+    // round just finished), so preview from the top instead — the next
+    // round always restarts at interval 0.
     const previewingNextRound = timerState?.currentStage === "roundRest";
     const previewIndex = previewingNextRound ? 0 : currentIntervalIndex.current;
 
     const intervalPreview: IntervalPreview[] = [];
     const current = getIntervalAtIndex(previewIndex);
-    const next = getIntervalAtIndex(previewIndex + 1);
     if (current) {
         const totals = previewingNextRound
             ? { on: current.on, off: current.off, onTotalMs: current.on, offTotalMs: current.off }
             : getCurrentIntervalRemaining(current);
         intervalPreview.push({ number: previewIndex + 1, ...totals });
     }
-    if (next) {
-        intervalPreview.push({ number: previewIndex + 2, on: next.on, off: next.off, onTotalMs: next.on, offTotalMs: next.off });
+    for (let index = previewIndex + 1; index < totalRepeats.current; index++) {
+        const upcoming = getIntervalAtIndex(index);
+        if (!upcoming) break;
+        intervalPreview.push({ number: index + 1, on: upcoming.on, off: upcoming.off, onTotalMs: upcoming.on, offTotalMs: upcoming.off });
     }
 
     return {

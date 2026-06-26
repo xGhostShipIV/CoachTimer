@@ -1,4 +1,5 @@
 import { DEFAULT_CONFIG } from "@/constants/data-constants";
+import { TimeConfiguration } from "@/data/data-types";
 import { BTCStyles, Color } from "@/styles/BTCIntervalTimer";
 import { SavedConfiguration } from "@/utils/configuration-storage";
 import React from "react";
@@ -8,25 +9,32 @@ import { BackButton, LoadTimerButton, SaveTimerButton } from "../timer-action-bu
 interface ToolbarHeaderProps {
     onBack?: () => void;
     onLoad: (entry: SavedConfiguration) => void;
+    onSave?: (name: string) => void;
+    configuration?: TimeConfiguration | undefined;
+    allowSaveLoad?: boolean;
 }
 
-export default function ToolbarHeaderView({ onBack, onLoad }: ToolbarHeaderProps) {
+export default function ToolbarHeaderView({ onBack, onLoad, onSave, configuration, allowSaveLoad = true }: ToolbarHeaderProps) {
     return (
         <View style={BTCStyles.toolbar}>
             {onBack ? <BackButton onPress={onBack} style={BTCStyles.toolBack} /> : <View style={localStyles.backSpacer} />}
 
-            <View style={localStyles.toolbarActions}>
-                <LoadTimerButton
-                    onLoad={onLoad}
-                    triggerStyle={BTCStyles.toolChip}
-                    triggerTextStyle={BTCStyles.toolChipText}
-                />
-                <SaveTimerButton
-                    configuration={DEFAULT_CONFIG}
-                    triggerStyle={BTCStyles.toolChip}
-                    triggerTextStyle={BTCStyles.toolChipText}
-                />
-            </View>
+            {
+                allowSaveLoad ?
+                <View style={localStyles.toolbarActions}>
+                    <LoadTimerButton
+                        onLoad={onLoad}
+                        triggerStyle={BTCStyles.toolChip}
+                        triggerTextStyle={BTCStyles.toolChipText}
+                    />
+                    <SaveTimerButton
+                        configuration={configuration ?? DEFAULT_CONFIG}
+                        onSaved={onSave}
+                        triggerStyle={BTCStyles.toolChip}
+                        triggerTextStyle={BTCStyles.toolChipText}
+                    />
+                </View> : <></>
+            }
         </View>
     );
 }

@@ -109,6 +109,11 @@ export const SegmentTone = {
   offActiveText: '#FFFFFF',
   offIdleBg: '#a63c18',
   offIdleText: '#e7c4ab',
+  // Queued intervals further out than the idle segment of the current
+  // block — same navy family as the idle tone, just dimmed down so they
+  // recede behind whatever's actually up next.
+  pendingBg: '#101a30',
+  pendingText: '#3d4566',
 } as const;
 
 export type Phase = keyof typeof Stage;
@@ -135,13 +140,13 @@ export const BTCStyles = StyleSheet.create({
 
   // round counter
   roundRow: { flexDirection: 'row', alignItems: 'baseline', gap: 9 },
-  roundLabel: { fontFamily: Font.oswaldSemi, fontSize: 19, letterSpacing: 2 },
-  roundNum: { fontFamily: Font.oswaldBold, fontSize: 38, letterSpacing: 1 },
-  roundSlash: { fontFamily: Font.oswaldSemi, fontSize: 26, letterSpacing: 1 },
+  roundLabel: { fontFamily: Font.oswaldSemi, fontSize: 29, letterSpacing: 2 },
+  roundNum: { fontFamily: Font.oswaldBold, fontSize: 57, letterSpacing: 1 },
+  roundSlash: { fontFamily: Font.oswaldSemi, fontSize: 39, letterSpacing: 1 },
 
   // hero — the single most distance-readable element on the active screen
-  heroLabel: { fontFamily: Font.barlowBold, fontSize: 14, letterSpacing: 3, marginBottom: 2 },
-  hero: { fontFamily: Font.oswaldBold, fontSize: 108, letterSpacing: 1 },
+  heroLabel: { fontFamily: Font.barlowBold, fontSize: 21, letterSpacing: 3, marginBottom: -22 },
+  hero: { fontFamily: Font.oswaldBold, fontSize: 142, letterSpacing: 1, textAlign: 'center' },
 
   // phase strip
   phaseStrip: { flexDirection: 'row', alignItems: 'center', gap: 11, height: 46, paddingHorizontal: 16, borderRadius: 6 },
@@ -150,7 +155,7 @@ export const BTCStyles = StyleSheet.create({
   phaseTag: { fontFamily: Font.barlowBold, fontSize: 12, letterSpacing: 2, marginLeft: 'auto' },
 
   // interval block
-  block: { borderRadius: 9, overflow: 'hidden', borderWidth: 1.5, borderColor: 'rgba(255,255,255,0.06)' },
+  block: { borderRadius: 9, overflow: 'hidden', borderWidth: 2.5, borderColor: 'rgba(255,255,255,0.06)' },
   segRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
   segLabel: { fontFamily: Font.barlowBold, fontSize: 13, letterSpacing: 2 },
   segTag: { fontFamily: Font.barlowBold, fontSize: 12, letterSpacing: 2 },
