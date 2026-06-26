@@ -7,8 +7,9 @@ import { Color } from "@/styles/main-styles";
 import { landingStyles } from "@/styles/navyTheme";
 import { SavedConfiguration } from "@/utils/configuration-storage";
 import React, { SetStateAction, useState } from "react";
-import { Image, Pressable, Text, View } from "react-native";
+import { Pressable, Text, View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
+import LogoImage from "./logo-image";
 
 interface HomeScreenProps {
     setActiveView: React.Dispatch<SetStateAction<ActiveView | undefined>>;
@@ -21,9 +22,7 @@ export default function LandingScreen({ setActiveView, loadedPreset, setLoadedPr
 
     return (
         <>
-            <View style={landingStyles.logoWrap}>
-                <Image source={require('@/assets/images/btc-logo.png')} style={landingStyles.logo} />
-            </View>
+            <LogoImage />
 
             <ScrollView
                 contentContainerStyle={[

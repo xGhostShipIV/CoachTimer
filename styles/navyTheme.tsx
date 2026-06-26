@@ -41,8 +41,20 @@ export const landingStyles = StyleSheet.create({
   statusRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingHorizontal: 18, paddingTop: 14 },
   statusText: { fontFamily: Font.mono, fontSize: 10, color: '#6f7da8' },
 
-  // logo — faded oval mask is applied on the <Image> itself
+  // logo — a soft white oval glow sits behind the mark; since LinearGradient
+  // only fades along one axis, two perpendicular gradients are layered inside
+  // the oval clip so every edge (not just left/right or top/bottom) fades to
+  // alpha 0.
   logoWrap: { alignItems: 'center', justifyContent: 'center', paddingBottom: 2 },
+  logoGlow: {
+    position: 'absolute',
+    marginRight: 6,
+    width: 150,
+    height: 80,
+    borderRadius: 9999,
+    overflow: 'hidden',
+  },
+  logoGlowFill: { position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 },
   logo: { width: 210, height: undefined, aspectRatio: 2.4, resizeMode: 'contain' },
 
   // recommended row
