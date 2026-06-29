@@ -5,7 +5,7 @@ import { SavedConfiguration } from "@/utils/configuration-storage";
 const MIN_USAGES_FOR_SUGGESTION = 6;
 // A past usage counts toward "used around now" if it falls within this many
 // hours of the current time of day (measured on a circular 24h clock).
-const TIME_WINDOW_HOURS = 2;
+export const TIME_WINDOW_HOURS = 1;
 // Cap how many suggestions we surface at once.
 const DEFAULT_MAX_SUGGESTIONS = 3;
 

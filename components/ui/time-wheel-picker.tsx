@@ -1,5 +1,5 @@
 import { BTCStyles, Color, Font } from "@/styles/BTCIntervalTimer";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Modal, Pressable, StyleProp, StyleSheet, Text, TextStyle, View, ViewStyle } from "react-native";
 import { WheelPicker } from "./wheel-picker";
 
@@ -24,7 +24,11 @@ const SECOND_OPTIONS = Array.from({ length: 60 }, (_, i) => i);
 
 // A two-wheel mm:ss picker — same "closed trigger -> centered modal" shell as
 // WheelPicker, but the modal holds two inline (hideOptionsWhenUnfocused=false)
-// wheels side by side instead of one.
+// wheels side by side instead of one. Tapping a specific minute/second commits
+// immediately (mirroring WheelPicker's own tap-to-select); dismissing the
+// modal — tap-away or the hardware back button — commits whichever minute
+// and second are currently centered, same as WheelPicker's own modal does.
+// Just scrolling never commits anything on its own.
 export function TimeWheelPicker({
     label,
     valueMs,
@@ -43,23 +47,40 @@ export function TimeWheelPicker({
 
     const minuteOptions = Array.from({ length: maxMinutes + 1 }, (_, i) => i);
 
+    // Tracks whichever minute/second is currently centered in each wheel, so
+    // dismissing the modal commits the centered values even if the user
+    // never tapped a row directly.
+    const centeredMinutesRef = useRef(minutes);
+    const centeredSecondsRef = useRef(seconds);
+
     const commit = (nextMinutes: number, nextSeconds: number) => {
         onChange((nextMinutes * 60 + nextSeconds) * 1000);
+    };
+
+    const openPicker = () => {
+        centeredMinutesRef.current = minutes;
+        centeredSecondsRef.current = seconds;
+        setIsOpen(true);
+    };
+
+    const confirmAndClose = () => {
+        commit(centeredMinutesRef.current, centeredSecondsRef.current);
+        setIsOpen(false);
     };
 
     return (
         <>
             {renderTrigger ? (
-                renderTrigger({ displayValue, open: () => setIsOpen(true) })
+                renderTrigger({ displayValue, open: openPicker })
             ) : (
-                <Pressable style={[styles.trigger, triggerStyle]} onPress={() => setIsOpen(true)}>
+                <Pressable style={[styles.trigger, triggerStyle]} onPress={openPicker}>
                     <Text style={[styles.triggerText, triggerTextStyle]}>{displayValue}</Text>
                 </Pressable>
             )}
 
             {isOpen && (
-                <Modal transparent visible animationType="fade" onRequestClose={() => setIsOpen(false)}>
-                    <Pressable style={BTCStyles.scrim} onPress={() => setIsOpen(false)}>
+                <Modal transparent visible animationType="fade" onRequestClose={confirmAndClose}>
+                    <Pressable style={BTCStyles.scrim} onPress={confirmAndClose}>
                         <Pressable style={BTCStyles.pickerCard} onPress={(event) => event.stopPropagation()}>
                             <Text style={styles.header}>{label}</Text>
                             <View style={styles.headerRule} />
@@ -69,7 +90,13 @@ export function TimeWheelPicker({
                                     <WheelPicker
                                         options={minuteOptions}
                                         value={minutes}
-                                        onChange={(next) => commit(next, seconds)}
+                                        onChange={(next) => {
+                                            centeredMinutesRef.current = next;
+                                            commit(next, centeredSecondsRef.current);
+                                        }}
+                                        onCenterChange={(next) => {
+                                            centeredMinutesRef.current = next;
+                                        }}
                                         hideOptionsWhenUnfocused={false}
                                         formatOption={pad2}
                                     />
@@ -81,7 +108,13 @@ export function TimeWheelPicker({
                                     <WheelPicker
                                         options={SECOND_OPTIONS}
                                         value={seconds}
-                                        onChange={(next) => commit(minutes, next)}
+                                        onChange={(next) => {
+                                            centeredSecondsRef.current = next;
+                                            commit(centeredMinutesRef.current, next);
+                                        }}
+                                        onCenterChange={(next) => {
+                                            centeredSecondsRef.current = next;
+                                        }}
                                         hideOptionsWhenUnfocused={false}
                                         formatOption={pad2}
                                     />

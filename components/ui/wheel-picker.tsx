@@ -33,6 +33,11 @@ interface WheelPickerProps<T extends string | number> {
     // Formats an option for display only — selection still keys off the raw
     // value. Defaults to String(option).
     formatOption?: (option: T) => string;
+    // Notified whenever scrolling settles on a new centered option. Purely
+    // informational — never triggers selection on its own — so a parent
+    // wrapping this wheel in its own modal (e.g. TimeWheelPicker) can know
+    // what to commit if the user dismisses without tapping a row directly.
+    onCenterChange?: (value: T) => void;
     // When true (default), options stay hidden behind a closed trigger until
     // tapped, then open in a centered modal. When false, the wheel itself is
     // always visible and scrollable inline — no trigger, no modal.
@@ -50,22 +55,26 @@ interface WheelPickerProps<T extends string | number> {
 }
 
 // A picker built around a fixed center band (the two orange lines) —
-// whichever option is scrolled in between them is the selected one. Tapping
-// a specific option selects it directly; tapping outside the wheel (or
-// letting a scroll settle, when rendered inline) commits whichever option is
-// currently centered.
+// whichever option is scrolled in between them is the candidate, but only
+// two gestures ever commit a selection: tapping a specific option directly,
+// or tapping outside the wheel to dismiss its modal (which commits whichever
+// option is currently centered). Letting a scroll settle never commits by
+// itself — centering an option is just navigation until one of those two
+// gestures confirms it.
 //
 // By default the wheel stays hidden behind a closed trigger until tapped,
 // opening in a centered modal (so it never intercepts touches meant for an
 // ancestor ScrollView the way the native Picker widget did). Set
 // hideOptionsWhenUnfocused={false} to skip the trigger/modal entirely and
-// render the wheel directly in the layout, always visible.
+// render the wheel directly in the layout, always visible — in that case
+// only a direct tap on a row can commit, since there's no modal to dismiss.
 export function WheelPicker<T extends string | number>({
     options,
     value,
     onChange,
     onDeleteOption,
     formatOption = (option) => String(option),
+    onCenterChange,
     hideOptionsWhenUnfocused = true,
     triggerStyle,
     triggerTextStyle,
@@ -97,11 +106,7 @@ export function WheelPicker<T extends string | number>({
     const trackCenteredIndex = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
         const index = Math.min(Math.max(Math.round(event.nativeEvent.contentOffset.y / ITEM_HEIGHT), 0), options.length - 1);
         centeredIndexRef.current = index;
-        // Inline mode has no "tap outside to confirm" gesture, so a settled
-        // scroll is itself the confirmation.
-        if (!hideOptionsWhenUnfocused) {
-            onChange(options[index] ?? value);
-        }
+        onCenterChange?.(options[index] ?? value);
     };
 
     const wheel = (
