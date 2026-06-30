@@ -21,6 +21,13 @@ const LIST_HEIGHT = ITEM_HEIGHT * VISIBLE_ITEMS;
 // How far (in items) a row fades out to its dimmest opacity.
 const FADE_DISTANCE_ITEMS = 2;
 const DIMMEST_OPACITY = 0.15;
+// decelerationRate="fast" resolves to 0.99 on iOS but only 0.9 on Android —
+// roughly 10x less coast distance for the same flick, since coast distance
+// scales with 1/(1-rate). A single explicit value gives a flick noticeably
+// more room to carry through several options (matching its intensity) on
+// both platforms, while staying well short of "normal" (0.998/0.985), which
+// coasts long enough to feel floaty.
+const SCROLL_DECELERATION_RATE = 0.995;
 
 interface WheelPickerProps<T extends string | number> {
     options: T[];
@@ -121,7 +128,7 @@ export function WheelPicker<T extends string | number>({
                 <Animated.ScrollView
                     showsVerticalScrollIndicator={false}
                     snapToInterval={ITEM_HEIGHT}
-                    decelerationRate="fast"
+                    decelerationRate={SCROLL_DECELERATION_RATE}
                     contentOffset={{ x: 0, y: centeredIndexRef.current * ITEM_HEIGHT }}
                     contentContainerStyle={{ paddingVertical: (LIST_HEIGHT - ITEM_HEIGHT) / 2 }}
                     onScroll={Animated.event([{ nativeEvent: { contentOffset: { y: scrollY } } }], {

@@ -1,4 +1,5 @@
 import { ActiveView } from "@/app";
+import HomeBannerAd from "@/components/ads/home-banner-ad";
 import SavedTimerList from "@/components/saved-timer-list";
 import SuggestedTimers from "@/components/suggested-timers";
 import Link from "@/components/ui/ClickableLink";
@@ -69,6 +70,8 @@ export default function LandingScreen({ setActiveView, loadedPreset, setLoadedPr
                     url="https://www.btcworkout.com/"
                     text="btcworkout.com"
                 />
+
+                <HomeBannerAd />
             </ScrollView>
         </>
     )
