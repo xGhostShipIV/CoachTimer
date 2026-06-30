@@ -87,50 +87,82 @@ interface SaveTimerButtonProps {
 export function SaveTimerButton({ configuration, onSaved, triggerStyle, triggerTextStyle }: SaveTimerButtonProps) {
     const [isOpen, setIsOpen] = useState(false);
     const [name, setName] = useState("");
+    // Set to the trimmed name once we've detected it collides with an
+    // existing saved timer, so the prompt can switch to an overwrite
+    // confirmation step instead of saving immediately.
+    const [pendingOverwriteName, setPendingOverwriteName] = useState<string | null>(null);
 
     const close = () => {
         setIsOpen(false);
         setName("");
+        setPendingOverwriteName(null);
+    };
+
+    const doSave = async (trimmed: string) => {
+        await saveConfiguration(trimmed, configuration);
+        onSaved?.(trimmed);
+        close();
     };
 
     const handleSave = async () => {
         const trimmed = name.trim();
         if (!trimmed) return;
 
-        await saveConfiguration(trimmed, configuration);
-        onSaved?.(trimmed);
-        close();
+        const existing = await listSavedConfigurations();
+        if (existing.some((entry) => entry.name === trimmed)) {
+            setPendingOverwriteName(trimmed);
+            return;
+        }
+
+        await doSave(trimmed);
     };
 
     return (
         <FloatingPromptButton
             icon="square.and.arrow.down"
             label="SAVE"
-            title="Save Timer As"
+            title={pendingOverwriteName ? "Overwrite Timer?" : "Save Timer As"}
             visible={isOpen}
             onPress={() => setIsOpen(true)}
             onRequestClose={close}
             triggerStyle={triggerStyle}
             triggerTextStyle={triggerTextStyle}
         >
-            <TextInput
-                style={styles.input}
-                value={name}
-                onChangeText={setName}
-                placeholder="Timer name"
-                placeholderTextColor={SETUP.labelDim}
-                autoFocus
-                onSubmitEditing={handleSave}
-            />
+            {pendingOverwriteName ? (
+                <>
+                    <Text style={styles.bodyText}>{`A timer named "${pendingOverwriteName}" already exists. Overwrite it?`}</Text>
 
-            <View style={styles.actions}>
-                <Pressable style={[styles.actionButton, styles.cancelButton]} onPress={close}>
-                    <Text style={styles.cancelButtonText}>Cancel</Text>
-                </Pressable>
-                <Pressable style={[styles.actionButton, styles.saveButton]} onPress={handleSave}>
-                    <Text style={styles.saveButtonText}>Save</Text>
-                </Pressable>
-            </View>
+                    <View style={styles.actions}>
+                        <Pressable style={[styles.actionButton, styles.cancelButton]} onPress={() => setPendingOverwriteName(null)}>
+                            <Text style={styles.cancelButtonText}>Keep Editing</Text>
+                        </Pressable>
+                        <Pressable style={[styles.actionButton, styles.saveButton]} onPress={() => doSave(pendingOverwriteName)}>
+                            <Text style={styles.saveButtonText}>Overwrite</Text>
+                        </Pressable>
+                    </View>
+                </>
+            ) : (
+                <>
+                    <TextInput
+                        style={styles.input}
+                        value={name}
+                        onChangeText={setName}
+                        placeholder="Timer name"
+                        placeholderTextColor={SETUP.labelDim}
+                        autoFocus
+                        onSubmitEditing={handleSave}
+                    />
+
+                    <View style={styles.actions}>
+                        <Pressable style={[styles.actionButton, styles.cancelButton]} onPress={close}>
+                            <Text style={styles.cancelButtonText}>Cancel</Text>
+                        </Pressable>
+                        <Pressable style={[styles.actionButton, styles.saveButton]} onPress={handleSave}>
+                            <Text style={styles.saveButtonText}>Save</Text>
+                        </Pressable>
+                    </View>
+                </>
+            )}
         </FloatingPromptButton>
     );
 }
@@ -228,6 +260,11 @@ const styles = StyleSheet.create({
         fontSize: 16,
         letterSpacing: 1,
         color: Color.white,
+    },
+    bodyText: {
+        fontFamily: Font.barlowSemi,
+        fontSize: 14,
+        color: SETUP.label,
     },
     input: {
         backgroundColor: SETUP.field,
