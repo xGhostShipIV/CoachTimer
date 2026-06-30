@@ -1,7 +1,8 @@
 import { useState } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { LayoutAnimation, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import HomeBannerAd from '@/components/ads/home-banner-ad';
 import IntervalView from '@/components/Views/IntervalRoundTimer/interval-view';
 import LandingScreen from '@/components/Views/LandingScreen/LandingScreenView';
 import { StopwatchView } from '@/components/Views/StopWatchView';
@@ -15,6 +16,12 @@ export default function HomeScreen() {
 
     const [activeView, setActiveView] = useState<ActiveView | undefined>(undefined);
     const [loadedPreset, setLoadedPreset] = useState<SavedConfiguration | undefined>(undefined);
+    const [isTimerActive, setIsTimerActive] = useState(false);
+
+    const handleTimerActiveChange = (active: boolean) => {
+        LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+        setIsTimerActive(active);
+    };
 
     let content = <LandingScreen
         setActiveView={setActiveView}
@@ -26,12 +33,15 @@ export default function HomeScreen() {
         content = <IntervalView
             onBack={() => setActiveView(undefined)}
             initialEntryState={loadedPreset}
+            onActiveChange={handleTimerActiveChange}
         />;
     } else if (activeView == 'stopwatch') {
-        content = <StopwatchView 
+        content = <StopwatchView
             onBack={() => setActiveView(undefined)}
         />
     }
+
+    const showAd = activeView !== 'interval' || !isTimerActive;
 
     return (
         <View style={{ ...styles.fullScreen, paddingTop: insets.top }}>
@@ -41,14 +51,8 @@ export default function HomeScreen() {
             </View>
 
             {/* Footer */}
-            <View style={{ height: 0, backgroundColor: Color.orange }}>
-                {
-                    /* 
-                       Here goes our ad controller 
-                       must be able to affect height of parent container.
-                       State driven?
-                    */
-                }
+            <View style={{ height: 'auto', overflow: 'hidden' }}>
+                {showAd && <HomeBannerAd />}
             </View>
         </View>
     )
