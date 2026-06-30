@@ -25,6 +25,7 @@ export default function LandingScreen({ setActiveView, loadedPreset, setLoadedPr
             <LogoImage />
 
             <ScrollView
+                style={{ flex: 1 }}
                 contentContainerStyle={[
                     { flexGrow: 1 }
                 ]}
