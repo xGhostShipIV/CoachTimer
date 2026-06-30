@@ -2,7 +2,9 @@ import { BarlowSemiCondensed_600SemiBold, BarlowSemiCondensed_700Bold } from '@e
 import { Oswald_500Medium, Oswald_600SemiBold, Oswald_700Bold } from '@expo-google-fonts/oswald';
 import { SpaceMono_400Regular } from '@expo-google-fonts/space-mono';
 import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
+import { useAssets } from 'expo-asset';
 import { useFonts } from 'expo-font';
+import { NOTIFICATION_URLS } from '@/constants/asset-constants';
 import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
@@ -46,13 +48,15 @@ export default function RootLayout() {
     SpaceMono_400Regular,
   });
 
+  const [logoAsset] = useAssets([require('@/assets/images/btc-logo.png'), ...NOTIFICATION_URLS]);
+
   useEffect(() => {
-    if (fontsLoaded || fontError) {
+    if ((fontsLoaded || fontError) && logoAsset) {
       SplashScreen.hideAsync();
     }
-  }, [fontsLoaded, fontError]);
+  }, [fontsLoaded, fontError, logoAsset]);
 
-  if (!fontsLoaded && !fontError) {
+  if ((!fontsLoaded && !fontError) || !logoAsset) {
     return null;
   }
 
