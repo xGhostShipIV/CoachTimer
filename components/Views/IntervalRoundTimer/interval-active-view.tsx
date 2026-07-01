@@ -1,9 +1,10 @@
 import { useScreenBackground } from "@/components/screen-frame";
+import Concrete from "@/components/ui/ConcreteButton";
 import { TimeConfiguration } from "@/data/data-types";
 import { BTCStyles, Stage } from "@/styles/BTCIntervalTimer";
 import { formatMinutesSeconds } from "@/utils/time-utils";
 import { useEffect } from "react";
-import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+import { ScrollView, StyleSheet, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import ActiveIntervalStack from "./active-interval-stack";
 import { useIntervalTimer } from "./use-interval-timer";
@@ -93,17 +94,14 @@ export default function IntervalActiveTimer({ data, onFinish, onStop }: ActiveTi
                 </ScrollView>
             </View>
 
-            <Pressable
-                style={[
-                    BTCStyles.stop,
-                    styles.stopMargin,
-                    { backgroundColor: palette.stopBg, borderColor: palette.stopBorder, marginBottom: Math.max(18, insets.bottom + 10) },
-                ]}
-                onPress={() => onStop?.()}
-            >
-                <Text style={[BTCStyles.stopGlyph, { color: palette.stopText }]}>▪</Text>
-                <Text style={[BTCStyles.stopText, { color: palette.stopText }]}>STOP</Text>
-            </Pressable>
+            <View style={[styles.stopMargin, { marginBottom: Math.max(18, insets.bottom + 10) }]}>
+                <Concrete ledge={palette.stopLedge} onPress={() => onStop?.()}>
+                    <View style={[BTCStyles.stop, { backgroundColor: palette.stopBg, borderColor: palette.stopBorder }]}>
+                        <Text style={[BTCStyles.stopGlyph, { color: palette.stopText }]}>▪</Text>
+                        <Text style={[BTCStyles.stopText, { color: palette.stopText }]}>STOP</Text>
+                    </View>
+                </Concrete>
+            </View>
         </View>
     );
 }

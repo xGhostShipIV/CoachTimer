@@ -17,6 +17,7 @@ export const Color = {
   navy: '#122142',
   orange: '#F05A28',
   orangeLedge: '#a63c18',
+  navyLedge: '#0a1430',
   white: '#FFFFFF',
 };
 

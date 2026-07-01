@@ -1,5 +1,6 @@
 import { DEFAULT_CONFIG } from "@/constants/data-constants";
 import { TimeConfiguration } from "@/data/data-types";
+import Concrete from "@/components/ui/ConcreteButton";
 import { BTCStyles, Color } from "@/styles/BTCIntervalTimer";
 import { recordConfigurationUsage } from "@/utils/configuration-storage";
 import { calculateTotalConfigurationTime, formatTimestamp } from "@/utils/time-utils";
@@ -81,8 +82,8 @@ export default function IntervalSetupView({ initialConfiguration, initialConfigN
                         <Text style={BTCStyles.totalValue}>{formatTimestamp(calculateTotalConfigurationTime(configuration), false)}</Text>
                     </View>
 
-                    <Pressable
-                        style={BTCStyles.start}
+                    <Concrete
+                        ledge={Color.orangeLedge}
                         onPress={() => {
                             if (loadedConfigName) {
                                 recordConfigurationUsage(loadedConfigName).catch(() => { });
@@ -90,8 +91,10 @@ export default function IntervalSetupView({ initialConfiguration, initialConfigN
                             onStart?.(configuration, loadedConfigName);
                         }}
                     >
-                        <Text style={BTCStyles.startText}>▸ START</Text>
-                    </Pressable>
+                        <View style={BTCStyles.start}>
+                            <Text style={BTCStyles.startText}>▸ START</Text>
+                        </View>
+                    </Concrete>
                 </ScrollView>
             </View>
         </>

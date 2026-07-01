@@ -1,7 +1,8 @@
 import { BackButton } from "@/components/timer-action-buttons";
+import Concrete from "@/components/ui/ConcreteButton";
 import { BTCStyles, Color } from "@/styles/BTCIntervalTimer";
 import { useCallback, useRef, useState } from "react";
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import NotificationContainer from "../Notifications/notification-container";
 import { TimeText } from "../Timer/time-text";
@@ -57,14 +58,18 @@ export function StopwatchView({ onBack }: StopwatchViewProps) {
 
 
             <View style={styles.actions}>
-                <Pressable style={BTCStyles.start} onPress={togglePause}>
-                    <Text style={BTCStyles.startText}>{isPaused ? "▸ START" : "‖ PAUSE"}</Text>
-                </Pressable>
+                <Concrete ledge={Color.orangeLedge} onPress={togglePause}>
+                    <View style={BTCStyles.start}>
+                        <Text style={BTCStyles.startText}>{isPaused ? "▸ START" : "‖ PAUSE"}</Text>
+                    </View>
+                </Concrete>
 
-                <Pressable style={[BTCStyles.stop, styles.stopButton]} onPress={clearTimer}>
-                    <Text style={[BTCStyles.stopGlyph, styles.stopColor]}>▪</Text>
-                    <Text style={[BTCStyles.stopText, styles.stopColor]}>STOP / CLEAR</Text>
-                </Pressable>
+                <Concrete ledge={Color.navyLedge} onPress={clearTimer}>
+                    <View style={[BTCStyles.stop, styles.stopButton]}>
+                        <Text style={[BTCStyles.stopGlyph, styles.stopColor]}>▪</Text>
+                        <Text style={[BTCStyles.stopText, styles.stopColor]}>STOP / CLEAR</Text>
+                    </View>
+                </Concrete>
             </View>
         </View>
     );

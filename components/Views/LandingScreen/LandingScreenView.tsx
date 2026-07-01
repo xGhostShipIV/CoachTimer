@@ -3,11 +3,11 @@ import SavedTimerList from "@/components/saved-timer-list";
 import SuggestedTimers from "@/components/suggested-timers";
 import Link from "@/components/ui/ClickableLink";
 import Concrete from "@/components/ui/ConcreteButton";
-import { Color } from "@/styles/main-styles";
+import { Color } from "@/styles/BTCIntervalTimer";
 import { landingStyles } from "@/styles/navyTheme";
 import { SavedConfiguration } from "@/utils/configuration-storage";
 import React, { SetStateAction, useState } from "react";
-import { Pressable, Text, View } from "react-native";
+import { Text, View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import LogoImage from "./logo-image";
 
@@ -52,9 +52,11 @@ export default function LandingScreen({ setActiveView, loadedPreset, setLoadedPr
                         </View>
                     </Concrete>
 
-                    <Pressable style={landingStyles.ctaSecondary} onPress={() => setActiveView('stopwatch')}>
-                        <Text style={landingStyles.ctaSecondaryText}>⏱ STOPWATCH</Text>
-                    </Pressable>
+                    <Concrete ledge={Color.navyLedge} onPress={() => setActiveView('stopwatch')}>
+                        <View style={landingStyles.ctaSecondary}>
+                            <Text style={landingStyles.ctaSecondaryText}>⏱ STOPWATCH</Text>
+                        </View>
+                    </Concrete>
                 </View>
 
                 <SavedTimerList

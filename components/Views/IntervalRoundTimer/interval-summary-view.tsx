@@ -1,8 +1,9 @@
 import { TimeConfiguration } from "@/data/data-types";
+import Concrete from "@/components/ui/ConcreteButton";
 import { BTCStyles, Color, Font } from "@/styles/BTCIntervalTimer";
 import { calculateWorkoutSummary, formatMinutesSeconds } from "@/utils/time-utils";
 import { useMemo } from "react";
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 interface IntervalSummaryViewProps {
@@ -92,12 +93,13 @@ export default function IntervalSummaryView({ configuration, configName, finishe
                 </View>
             </View>
 
-            <Pressable
-                style={[BTCStyles.start, styles.backButton, { marginBottom: Math.max(18, insets.bottom + 10) }]}
-                onPress={() => onBackToSetup?.()}
-            >
-                <Text style={BTCStyles.startText}>{"‹ BACK TO SETUP"}</Text>
-            </Pressable>
+            <View style={[styles.backButton, { marginBottom: Math.max(18, insets.bottom + 10) }]}>
+                <Concrete ledge={Color.orangeLedge} onPress={() => onBackToSetup?.()}>
+                    <View style={BTCStyles.start}>
+                        <Text style={BTCStyles.startText}>{"‹ BACK TO SETUP"}</Text>
+                    </View>
+                </Concrete>
+            </View>
         </View>
     );
 }
