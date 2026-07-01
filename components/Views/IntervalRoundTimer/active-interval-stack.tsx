@@ -36,8 +36,9 @@ export default function ActiveIntervalStack({ intervals, activePhase, fadeToColo
 
                 {upcoming.length > 0 && (
                     <View style={{...styles.upcomingMask, opacity: 0.6 }}>
-                        {upcoming.map((interval) => (
+                        {upcoming.map((interval, i) => (
                             <IntervalBlock
+                                key={i}
                                 number={interval.number}
                                 onRemainingMs={interval.on}
                                 onTotalMs={interval.onTotalMs}

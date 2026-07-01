@@ -19,11 +19,12 @@ function pad2(value: number) {
 }
 
 // Engine stage -> BTCStyles palette key. "on" reads white-hot ("work"),
-// "off" reads in the strike accent ("recover"); "finished"/undefined fall
-// back to "work" since onFinish below unmounts this view almost immediately.
+// "off" reads in the strike accent ("recover"); "finished" reuses the
+// roundRest tone (darkest dim) since the screen holds on this stage briefly
+// before handing off to the summary screen. Undefined also falls back here.
 function paletteFor(stage: ReturnType<typeof useIntervalTimer>["currentStage"]) {
     if (stage === "off") return Stage.recover;
-    if (stage === "roundRest") return Stage.roundRest;
+    if (stage === "roundRest" || stage === "finished") return Stage.roundRest;
     return Stage.work;
 }
 
@@ -33,6 +34,7 @@ export default function IntervalActiveTimer({ data, onFinish, onStop }: ActiveTi
 
     useEffect(() => {
         if (currentStage === "finished") {
+
             onFinish?.();
         }
     }, [currentStage, onFinish]);
@@ -40,6 +42,7 @@ export default function IntervalActiveTimer({ data, onFinish, onStop }: ActiveTi
     const palette = paletteFor(currentStage);
     const activePhase = currentStage === "on" ? "on" : currentStage === "off" ? "off" : null;
     const isRoundRest = currentStage === "roundRest";
+    const isFinished = currentStage === "finished";
     const noRest = activePhase === "on" && intervalPreview[0]?.offTotalMs === 0;
     const roundCount = currentRoundCount ?? 1;
 
@@ -69,7 +72,7 @@ export default function IntervalActiveTimer({ data, onFinish, onStop }: ActiveTi
             <View style={[BTCStyles.phaseStrip, { backgroundColor: palette.stripBg }]}>
                 <View style={[BTCStyles.phaseDot, { backgroundColor: palette.stripDot }]} />
                 <Text style={[BTCStyles.phaseLabel, { color: palette.stripText }]}>
-                    {isRoundRest ? "ROUND REST" : activePhase === "off" ? "RECOVER" : "WORK"}
+                    {isFinished ? "FINISHED" : isRoundRest ? "ROUND REST" : activePhase === "off" ? "RECOVER" : "WORK"}
                 </Text>
                 {noRest && <Text style={[BTCStyles.phaseTag, { color: palette.stripTagText }]}>NO REST</Text>}
             </View>

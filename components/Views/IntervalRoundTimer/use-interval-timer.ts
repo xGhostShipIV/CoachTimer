@@ -213,7 +213,7 @@ export function useIntervalTimer(data: TimeConfiguration) {
                 if (previous.currentRoundCount >= data.numRounds) {
                     // Last round finished - no rest period afterwards.
                     stopTimerRef.current?.();
-                    return { ...previous, currentStage: "finished" };
+                    return { ...previous, currentStage: "finished", timeRemainingMS: 0 };
                 }
 
                 isResting.current = true;

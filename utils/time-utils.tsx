@@ -49,3 +49,72 @@ export function calculateTotalConfigurationTime(configuration: TimeConfiguration
     const { intervals, numRounds, roundRest } = configuration;
     return calculateRoundTime(intervals) * numRounds + roundRest * (numRounds - 1);
 }
+
+export interface WorkoutSummary {
+    totalTimeMs: number;
+    workTimeMs: number;
+    restTimeMs: number;
+    rounds: number;
+    intervalsCompleted: number;
+    longestActiveMs: number;
+    longestActiveRound: number;
+    longestActiveInterval: number;
+}
+
+// The longest unbroken run of "on" time within a single round, chaining
+// across interval boundaries whenever an interval's `off` is 0 (i.e. no
+// visible rest between them) — matches the "NO REST" tag shown on the active
+// screen. Every round runs the identical interval sequence, so this is
+// computed once and reported against round 1.
+function calculateLongestActiveStreak(intervals: IntervalData[]): { ms: number; interval: number } {
+    const totalRepeats = intervals.reduce((acc, curr) => acc + curr.repeats, 0);
+
+    let best = { ms: 0, interval: 1 };
+    let current = 0;
+    let currentStart = 1;
+    let position = 0;
+
+    intervals.forEach((interval) => {
+        for (let rep = 0; rep < interval.repeats; rep++) {
+            position += 1;
+            if (current === 0) currentStart = position;
+            current += interval.on;
+
+            const isFinalRepeat = position === totalRepeats;
+            const hasGapAfter = interval.off > 0 && !isFinalRepeat;
+
+            if (hasGapAfter) {
+                if (current > best.ms) best = { ms: current, interval: currentStart };
+                current = 0;
+            }
+        }
+    });
+
+    if (current > best.ms) best = { ms: current, interval: currentStart };
+
+    return best;
+}
+
+// Stats for the post-workout summary screen, derived entirely from the
+// configuration that just ran to completion (a full run always finishes
+// every round/interval, so nothing here needs runtime tracking).
+export function calculateWorkoutSummary(configuration: TimeConfiguration): WorkoutSummary {
+    const { intervals, numRounds } = configuration;
+
+    const workTimeMs = intervals.reduce((acc, curr) => acc + curr.on * curr.repeats, 0) * numRounds;
+    const totalTimeMs = calculateTotalConfigurationTime(configuration);
+    const totalRepeatsPerRound = intervals.reduce((acc, curr) => acc + curr.repeats, 0);
+
+    const { ms: longestActiveMs, interval: longestActiveInterval } = calculateLongestActiveStreak(intervals);
+
+    return {
+        totalTimeMs,
+        workTimeMs,
+        restTimeMs: totalTimeMs - workTimeMs,
+        rounds: numRounds,
+        intervalsCompleted: totalRepeatsPerRound * numRounds,
+        longestActiveMs,
+        longestActiveRound: 1,
+        longestActiveInterval,
+    };
+}
