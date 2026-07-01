@@ -1,6 +1,7 @@
 import { landingStyles } from "@/styles/navyTheme";
+import { Image } from 'expo-image';
 import { LinearGradient } from "expo-linear-gradient";
-import { Image, View } from "react-native";
+import { View } from "react-native";
 
 // LinearGradient only fades along one axis, so two perpendicular gradients
 // are layered inside the oval clip behind the mark — that way every edge
