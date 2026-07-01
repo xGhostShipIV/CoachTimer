@@ -11,10 +11,13 @@ interface ToolbarHeaderProps {
     onLoad: (entry: SavedConfiguration) => void;
     onSave?: (name: string) => void;
     configuration?: TimeConfiguration | undefined;
+    // Name the current configuration was loaded from (or last saved as), if
+    // any, so the save prompt can prefill it and detect the overwrite case.
+    currentName?: string;
     allowSaveLoad?: boolean;
 }
 
-export default function ToolbarHeaderView({ onBack, onLoad, onSave, configuration, allowSaveLoad = true }: ToolbarHeaderProps) {
+export default function ToolbarHeaderView({ onBack, onLoad, onSave, configuration, currentName, allowSaveLoad = true }: ToolbarHeaderProps) {
     return (
         <View style={BTCStyles.toolbar}>
             {onBack ? <BackButton onPress={onBack} style={BTCStyles.toolBack} /> : <View style={localStyles.backSpacer} />}
@@ -29,6 +32,7 @@ export default function ToolbarHeaderView({ onBack, onLoad, onSave, configuratio
                     />
                     <SaveTimerButton
                         configuration={configuration ?? DEFAULT_CONFIG}
+                        initialName={currentName}
                         onSaved={onSave}
                         triggerStyle={BTCStyles.toolChip}
                         triggerTextStyle={BTCStyles.toolChipText}

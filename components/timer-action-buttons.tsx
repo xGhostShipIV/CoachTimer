@@ -77,6 +77,9 @@ function FloatingPromptButton({ icon, label, title, visible, onPress, onRequestC
 
 interface SaveTimerButtonProps {
     configuration: TimeConfiguration;
+    // Name the current configuration was loaded from (or last saved as), if
+    // any, so re-saving prefills the prompt and can detect the overwrite case.
+    initialName?: string;
     onSaved?: (name: string) => void;
     triggerStyle?: StyleProp<ViewStyle>;
     triggerTextStyle?: StyleProp<TextStyle>;
@@ -84,7 +87,7 @@ interface SaveTimerButtonProps {
 
 // Small button that opens a floating name prompt for saving the current
 // configuration, instead of taking up permanent space in the form.
-export function SaveTimerButton({ configuration, onSaved, triggerStyle, triggerTextStyle }: SaveTimerButtonProps) {
+export function SaveTimerButton({ configuration, initialName, onSaved, triggerStyle, triggerTextStyle }: SaveTimerButtonProps) {
     const [isOpen, setIsOpen] = useState(false);
     const [name, setName] = useState("");
     // Set to the trimmed name once we've detected it collides with an
@@ -123,7 +126,21 @@ export function SaveTimerButton({ configuration, onSaved, triggerStyle, triggerT
             label="SAVE"
             title={pendingOverwriteName ? "Overwrite Timer?" : "Save Timer As"}
             visible={isOpen}
-            onPress={() => setIsOpen(true)}
+            onPress={async () => {
+                const trimmedInitial = initialName?.trim();
+                if (trimmedInitial) {
+                    const existing = await listSavedConfigurations();
+                    if (existing.some((entry) => entry.name === trimmedInitial)) {
+                        setName(trimmedInitial);
+                        setPendingOverwriteName(trimmedInitial);
+                        setIsOpen(true);
+                        return;
+                    }
+                }
+
+                setName(initialName ?? "");
+                setIsOpen(true);
+            }}
             onRequestClose={close}
             triggerStyle={triggerStyle}
             triggerTextStyle={triggerTextStyle}
@@ -134,7 +151,7 @@ export function SaveTimerButton({ configuration, onSaved, triggerStyle, triggerT
 
                     <View style={styles.actions}>
                         <Pressable style={[styles.actionButton, styles.cancelButton]} onPress={() => setPendingOverwriteName(null)}>
-                            <Text style={styles.cancelButtonText}>Keep Editing</Text>
+                            <Text style={styles.cancelButtonText}>New Save</Text>
                         </Pressable>
                         <Pressable style={[styles.actionButton, styles.saveButton]} onPress={() => doSave(pendingOverwriteName)}>
                             <Text style={styles.saveButtonText}>Overwrite</Text>

@@ -44,6 +44,7 @@ export default function IntervalSetupView({ initialConfiguration, initialConfigN
                 }}
                 onSave={(name) => setLoadedConfigName(name)}
                 configuration={configuration}
+                currentName={loadedConfigName}
             />
 
             <View style={localStyles.body}>
