@@ -1,6 +1,8 @@
 import { Pressable, StyleProp, View, ViewStyle } from "react-native";
 
-/** "Concrete" button: hard color ledge + soft drop shadow. */
+/** "Concrete" button: hard color ledge + soft drop shadow. Presses shrink the
+ *  face slightly and wash it with a light overlay, so it reads as sinking
+ *  toward the ledge instead of just recoloring flatly. */
 export default function Concrete({
   ledge,
   radius = 6,
@@ -30,7 +32,7 @@ export default function Concrete({
       />
       <Pressable
         onPress={onPress}
-        style={[
+        style={({ pressed }) => [
           {
             borderRadius: radius,
             // soft drop
@@ -39,11 +41,29 @@ export default function Concrete({
             shadowOpacity: 0.45,
             shadowRadius: 16,
             elevation: 8,
+            transform: [{ scale: pressed ? 0.97 : 1 }],
           },
           style,
         ]}
       >
-        {children}
+        {(state) => (
+          <View style={{ borderRadius: radius, overflow: 'hidden' }}>
+            {children}
+            {state.pressed && (
+              <View
+                pointerEvents="none"
+                style={{
+                  position: 'absolute',
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  bottom: 0,
+                  backgroundColor: 'rgba(255,255,255,0.18)',
+                }}
+              />
+            )}
+          </View>
+        )}
       </Pressable>
     </View>
   );
