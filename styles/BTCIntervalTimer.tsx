@@ -260,6 +260,39 @@ export const BTCStyles = StyleSheet.create({
   // a look any screen actually ships with.
   wheelTriggerFallback: { height: 40, justifyContent: 'center', alignItems: 'center', paddingHorizontal: 10, borderWidth: 1, borderColor: '#ccc', borderRadius: 6 },
   wheelTriggerFallbackText: { fontSize: 16, color: '#000000' },
+
+  // ---- interval summary ----
+  summaryBadgeRow: { flexDirection: 'row', alignItems: 'center', gap: 9, marginBottom: 14 },
+  summaryCompleteBadge: { width: 24, height: 24, alignItems: 'center', justifyContent: 'center', backgroundColor: Color.orange, borderRadius: 6 },
+  summaryCompleteBadgeGlyph: { color: Color.white, fontFamily: Font.oswaldBold, fontSize: 13 },
+  summaryCompleteLabel: { fontFamily: Font.barlowBold, fontSize: 12, letterSpacing: 1.5, color: Color.orange },
+  summaryStamp: { marginLeft: 'auto', fontFamily: Font.mono, fontSize: 11, color: '#5d6a93' },
+
+  summaryCard: { backgroundColor: SETUP.field, borderWidth: 1, borderColor: SETUP.fieldBorder, borderRadius: 10, padding: 16, marginBottom: 14 },
+  summaryCardLabel: { fontFamily: Font.barlowBold, fontSize: 11, letterSpacing: 1.5, color: SETUP.label, marginBottom: 4 },
+  summaryCardLabelOrange: { fontFamily: Font.barlowBold, fontSize: 11, letterSpacing: 1.5, color: Color.orange },
+  summaryHeroValue: { fontFamily: Font.oswaldBold, fontSize: 52, color: Color.white, letterSpacing: 1 },
+  summaryHr: { height: 1, backgroundColor: '#21376a', marginVertical: 14 },
+  summarySplitRow: { flexDirection: 'row', alignItems: 'center', gap: 18 },
+  summarySplitDivider: { width: 1, alignSelf: 'stretch', backgroundColor: '#21376a' },
+  summarySplitValue: { fontFamily: Font.oswaldBold, fontSize: 24, color: Color.white },
+  summarySplitValueDim: { color: '#8593bd' },
+
+  summaryPairRow: { flexDirection: 'row', gap: 12 },
+  summaryPairCard: { flex: 1, marginBottom: 14 },
+  summaryPairValueRow: { flexDirection: 'row', alignItems: 'baseline' },
+  summaryPairValue: { fontFamily: Font.oswaldBold, fontSize: 30, color: Color.white },
+  summaryPairValueDim: { fontFamily: Font.oswaldSemi, fontSize: 16, color: '#5d6a93' },
+
+  summaryHeroLabelRow: { flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 14 },
+  summaryHeroDot: { width: 8, height: 8, borderRadius: 2, backgroundColor: Color.orange },
+  summaryLongestRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
+  summaryLongestSubLabel: { fontFamily: Font.barlowSemi, fontSize: 13, color: SETUP.label, marginBottom: 4 },
+  summaryLongestTimeBlock: { alignItems: 'flex-end' },
+  summaryLongestValue: { fontFamily: Font.oswaldBold, fontSize: 46, color: Color.white, letterSpacing: 1 },
+  summaryLongestRule: { height: 3, width: 46, backgroundColor: Color.orange, marginTop: 4 },
+
+  summaryBackButton: { marginTop: 'auto' },
 });
 
 /* ============================================================= *
