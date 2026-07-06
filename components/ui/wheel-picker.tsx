@@ -181,8 +181,8 @@ export function WheelPicker<T extends string | number>({
             {renderTrigger ? (
                 renderTrigger({ value, displayValue: formatOption(value), open: openPicker })
             ) : (
-                <Pressable style={[styles.trigger, triggerStyle]} onPress={openPicker}>
-                    <Text style={[styles.triggerText, triggerTextStyle]}>{formatOption(value)}</Text>
+                <Pressable style={[BTCStyles.wheelTriggerFallback, styles.trigger, triggerStyle]} onPress={openPicker}>
+                    <Text style={[BTCStyles.wheelTriggerFallbackText, triggerTextStyle]}>{formatOption(value)}</Text>
                 </Pressable>
             )}
 
@@ -201,18 +201,7 @@ export function WheelPicker<T extends string | number>({
 
 const styles = StyleSheet.create({
     trigger: {
-        height: 40,
         width: 180,
-        justifyContent: "center",
-        alignItems: "center",
-        paddingHorizontal: 10,
-        borderWidth: 1,
-        borderColor: "#ccc",
-        borderRadius: 6,
-    },
-    triggerText: {
-        fontSize: 16,
-        color: "#000000",
     },
     viewport: {
         height: LIST_HEIGHT,

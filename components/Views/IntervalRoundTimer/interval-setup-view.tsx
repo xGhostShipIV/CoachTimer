@@ -1,11 +1,11 @@
+import Concrete from "@/components/ui/ConcreteButton";
 import { DEFAULT_CONFIG } from "@/constants/data-constants";
 import { TimeConfiguration } from "@/data/data-types";
-import Concrete from "@/components/ui/ConcreteButton";
 import { BTCStyles, Color } from "@/styles/BTCIntervalTimer";
 import { recordConfigurationUsage } from "@/utils/configuration-storage";
 import { calculateTotalConfigurationTime, formatTimestamp } from "@/utils/time-utils";
 import { useEffect, useState } from "react";
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import IntervalContainer from "../../Intervals/interval";
 import RoundOptions from "../../Intervals/round-options";
@@ -48,10 +48,10 @@ export default function IntervalSetupView({ initialConfiguration, initialConfigN
                 currentName={loadedConfigName}
             />
 
-            <View style={localStyles.body}>
+            <View style={[BTCStyles.screenBody, { paddingBottom: 24 }]}>
                 <Text style={BTCStyles.kicker}>INTERVAL TIMER · SETUP</Text>
                 <Text style={BTCStyles.workoutName}>{(loadedConfigName ?? "New Workout").toUpperCase()}</Text>
-                <View style={[BTCStyles.nameRule, localStyles.nameRuleSpacing]} />
+                <View style={BTCStyles.nameRule} />
                 
                 <View style={{ marginBottom: 0 }}>
                     <RoundOptions
@@ -62,7 +62,7 @@ export default function IntervalSetupView({ initialConfiguration, initialConfigN
                     />
                 </View>
                 
-                <ScrollView style={localStyles.scrollArea} contentContainerStyle={localStyles.scrollContent}>
+                <ScrollView style={{ flex: 1 }} contentContainerStyle={{ paddingBottom: 24 }}>
                     <View style={localStyles.section}>
                         <SoundOptionsContainer
                             options={configuration.soundConfiguration ?? {}}
@@ -102,33 +102,6 @@ export default function IntervalSetupView({ initialConfiguration, initialConfigN
 }
 
 const localStyles = StyleSheet.create({
-    screen: {
-        flex: 1,
-        backgroundColor: Color.navy,
-    },
-    backSpacer: {
-        width: 42,
-    },
-    nameRuleSpacing: {
-        marginBottom: 20,
-    },
-    toolbarActions: {
-        flexDirection: "row",
-        gap: 9,
-        marginLeft: "auto",
-    },
-    body: {
-        flex: 1,
-        paddingHorizontal: 16,
-        paddingTop: 16,
-        paddingBottom: 24,
-    },
-    scrollArea: {
-        flex: 1,
-    },
-    scrollContent: {
-        paddingBottom: 24,
-    },
     section: {
         marginBottom: 16,
     },

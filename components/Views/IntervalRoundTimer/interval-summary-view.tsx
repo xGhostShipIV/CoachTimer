@@ -1,6 +1,6 @@
-import { TimeConfiguration } from "@/data/data-types";
 import Concrete from "@/components/ui/ConcreteButton";
-import { BTCStyles, Color, Font } from "@/styles/BTCIntervalTimer";
+import { TimeConfiguration } from "@/data/data-types";
+import { BTCStyles, Color, Font, SETUP } from "@/styles/BTCIntervalTimer";
 import { calculateWorkoutSummary, formatMinutesSeconds } from "@/utils/time-utils";
 import { useMemo } from "react";
 import { StyleSheet, Text, View } from "react-native";
@@ -41,7 +41,7 @@ export default function IntervalSummaryView({ configuration, configName, finishe
             </View>
 
             <Text style={BTCStyles.workoutName}>{(configName ?? "New Workout").toUpperCase()}</Text>
-            <View style={[BTCStyles.nameRule, styles.nameRuleSpacing]} />
+            <View style={BTCStyles.nameRule} />
 
             <View style={styles.card}>
                 <Text style={styles.cardLabel}>TOTAL TIME WORKED OUT</Text>
@@ -141,13 +141,10 @@ const styles = StyleSheet.create({
         fontSize: 11,
         color: "#5d6a93",
     },
-    nameRuleSpacing: {
-        marginBottom: 20,
-    },
     card: {
-        backgroundColor: "#0e1a38",
+        backgroundColor: SETUP.field,
         borderWidth: 1,
-        borderColor: "#2a3f74",
+        borderColor: SETUP.fieldBorder,
         borderRadius: 10,
         padding: 16,
         marginBottom: 14,
@@ -156,7 +153,7 @@ const styles = StyleSheet.create({
         fontFamily: Font.barlowBold,
         fontSize: 11,
         letterSpacing: 1.5,
-        color: "#7e8cb6",
+        color: SETUP.label,
         marginBottom: 4,
     },
     cardLabelOrange: {
@@ -236,7 +233,7 @@ const styles = StyleSheet.create({
     longestSubLabel: {
         fontFamily: Font.barlowSemi,
         fontSize: 13,
-        color: "#7e8cb6",
+        color: SETUP.label,
         marginBottom: 4,
     },
     longestTimeBlock: {

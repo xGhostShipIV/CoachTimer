@@ -1,8 +1,8 @@
 import { TimeConfiguration } from "@/data/data-types";
-import { Color } from "@/styles/BTCIntervalTimer";
+import { BTCStyles } from "@/styles/BTCIntervalTimer";
 import { SavedConfiguration } from "@/utils/configuration-storage";
 import React, { useEffect, useRef, useState } from "react";
-import { StyleSheet, View } from "react-native";
+import { View } from "react-native";
 import IntervalActiveTimer from "./interval-active-view";
 import IntervalSetupView from "./interval-setup-view";
 import IntervalSummaryView from "./interval-summary-view";
@@ -93,12 +93,5 @@ export default function IntervalView({ onBack, initialEntryState, onActiveChange
         );
     }
 
-    return <View style={styles.screen}>{content}</View>;
+    return <View style={BTCStyles.appScreen}>{content}</View>;
 }
-
-const styles = StyleSheet.create({
-    screen: {
-        flex: 1,
-        backgroundColor: Color.navy,
-    },
-});

@@ -1,7 +1,7 @@
 import { TimeWheelPicker } from "@/components/ui/time-wheel-picker";
 import { WheelPicker } from "@/components/ui/wheel-picker";
-import { BTCStyles } from "@/styles/BTCIntervalTimer";
 import { IntervalData, SoundOptions } from "@/data/data-types";
+import { BTCStyles } from "@/styles/BTCIntervalTimer";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import SoundOptionsContainer from "../options/sound-options-container";
 

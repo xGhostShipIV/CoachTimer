@@ -1,4 +1,4 @@
-import { landingStyles } from "@/styles/navyTheme";
+import { landingStyles } from "@/styles/BTCIntervalTimer";
 import { Image } from 'expo-image';
 import { LinearGradient } from "expo-linear-gradient";
 import { View } from "react-native";
