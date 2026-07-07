@@ -1,4 +1,11 @@
-import { TimeConfiguration } from "@/data/data-types";
+import { SoundOptions, TimeConfiguration } from "@/data/data-types";
+
+// Default sounds for round start/end/warning. Interval sounds have no defaults.
+export const DEFAULT_ROUND_SOUND_OPTIONS: SoundOptions = {
+    roundStartSfx: "three-bell",
+    roundEndSfx: "three-bell",
+    roundEndWarningSfx: "Wooden Clapper",
+};
 
 export const DEFAULT_CONFIG: TimeConfiguration = {
     intervals: [
@@ -9,7 +16,8 @@ export const DEFAULT_CONFIG: TimeConfiguration = {
         }
     ],
     numRounds: 3,
-    roundRest: 30000
+    roundRest: 30000,
+    soundConfiguration: DEFAULT_ROUND_SOUND_OPTIONS
 };
 
 export const TEST_CONFIG: TimeConfiguration = {

@@ -1,5 +1,5 @@
 import Concrete from "@/components/ui/ConcreteButton";
-import { DEFAULT_CONFIG } from "@/constants/data-constants";
+import { DEFAULT_CONFIG, DEFAULT_ROUND_SOUND_OPTIONS } from "@/constants/data-constants";
 import { TimeConfiguration } from "@/data/data-types";
 import { BTCStyles, Color } from "@/styles/BTCIntervalTimer";
 import { recordConfigurationUsage } from "@/utils/configuration-storage";
@@ -65,7 +65,7 @@ export default function IntervalSetupView({ initialConfiguration, initialConfigN
                 <ScrollView style={{ flex: 1 }} contentContainerStyle={{ paddingBottom: 24 }}>
                     <View style={localStyles.section}>
                         <SoundOptionsContainer
-                            options={configuration.soundConfiguration ?? {}}
+                            options={configuration.soundConfiguration ?? DEFAULT_ROUND_SOUND_OPTIONS}
                             onChange={(next) => updateConfig({ soundConfiguration: next })}
                         />
                     </View>

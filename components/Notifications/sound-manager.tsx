@@ -1,6 +1,6 @@
 import { NOTIFICATION_URLS } from "@/constants/asset-constants";
 import { Asset } from "expo-asset";
-import { AudioSource, useAudioPlayer } from "expo-audio";
+import { AudioSource, setAudioModeAsync, useAudioPlayer } from "expo-audio";
 import { useCallback, useEffect, useState } from "react";
 
 const soundMap: Record<string, AudioSource> = {};
@@ -15,6 +15,8 @@ export function useSoundManager() {
     const [playCount, setPlayCount] = useState(0);
 
     useEffect(() => {
+        setAudioModeAsync({ playsInSilentMode: true });
+
         NOTIFICATION_URLS.forEach((url) => {
             const asset = Asset.fromModule(url);
             const soundName = asset.name.replace(/\.[^/.]+$/, "");
