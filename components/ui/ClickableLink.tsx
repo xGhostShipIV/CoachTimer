@@ -1,4 +1,4 @@
-import { landingStyles } from "@/styles/navyTheme";
+import { landingStyles } from "@/styles/BTCIntervalTimer";
 import { Linking, Pressable, Text, View } from "react-native";
 
 interface LinkProps {

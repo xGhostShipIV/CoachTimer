@@ -6,7 +6,7 @@ import HomeBannerAd from '@/components/ads/home-banner-ad';
 import IntervalView from '@/components/Views/IntervalRoundTimer/interval-view';
 import LandingScreen from '@/components/Views/LandingScreen/LandingScreenView';
 import { StopwatchView } from '@/components/Views/StopWatchView';
-import { Color } from '@/styles/BTCIntervalTimer';
+import { BTCStyles, Color } from '@/styles/BTCIntervalTimer';
 import { SavedConfiguration } from '@/utils/configuration-storage';
 
 export type ActiveView = 'interval' | 'stopwatch';
@@ -36,7 +36,7 @@ export default function HomeScreen() {
     const showAd = activeView !== 'interval' || !isTimerActive;
 
     return (
-        <View style={[styles.screen, { paddingTop: insets.top }]}>
+        <View style={[BTCStyles.appScreen, { paddingTop: insets.top }]}>
             <View style={styles.content}>{content}</View>
             {showAd && <HomeBannerAd />}
         </View>
@@ -44,10 +44,6 @@ export default function HomeScreen() {
 }
 
 const styles = StyleSheet.create({
-    screen: {
-        flex: 1,
-        backgroundColor: Color.navy,
-    },
     content: {
         flexGrow: 1,
         backgroundColor: Color.navy,

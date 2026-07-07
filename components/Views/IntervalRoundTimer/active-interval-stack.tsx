@@ -1,4 +1,3 @@
-import { Font } from "@/styles/BTCIntervalTimer";
 import { ScrollView, StyleSheet, View } from "react-native";
 import IntervalBlock from "./active-interval";
 import { IntervalPreview } from "./use-interval-timer";
@@ -21,8 +20,8 @@ export default function ActiveIntervalStack({ intervals, activePhase, fadeToColo
     const [current, ...upcoming] = intervals;
 
     return (
-        <ScrollView contentContainerStyle={styles.upcomingContent} showsVerticalScrollIndicator={false}>
-            <View style={styles.container}>
+        <ScrollView contentContainerStyle={{ paddingBottom: 70 }} showsVerticalScrollIndicator={false}>
+            <View style={{ flex: 1 }}>
                 {current && (
                     <IntervalBlock
                         number={current.number}
@@ -57,35 +56,10 @@ export default function ActiveIntervalStack({ intervals, activePhase, fadeToColo
 }
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-    },
     upcomingMask: {
         flex: 1,
         marginTop: 12,
         overflow: "hidden",
         gap: 6
-    },
-    upcomingContent: {
-        paddingBottom: 70,
-    },
-    nextRow: {
-        flexDirection: "row",
-        alignItems: "center",
-        justifyContent: "space-between",
-        paddingHorizontal: 18,
-        paddingVertical: 14,
-        opacity: 0.4,
-    },
-    nextLabel: {
-        fontFamily: Font.barlowBold,
-        fontSize: 13,
-        letterSpacing: 2,
-        color: "#8593bd",
-    },
-    nextValue: {
-        fontFamily: Font.oswaldSemi,
-        fontSize: 24,
-        color: "#8593bd",
-    },
+    }
 });

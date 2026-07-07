@@ -1,5 +1,4 @@
-import { Font } from "@/styles/BTCIntervalTimer";
-import { landingStyles } from "@/styles/navyTheme";
+import { Font, landingStyles } from "@/styles/BTCIntervalTimer";
 import { listSavedConfigurations, SavedConfiguration, seedSuggestionTestData } from "@/utils/configuration-storage";
 import { suggestConfigurations } from "@/utils/timer-suggestions";
 import { useEffect, useState } from "react";

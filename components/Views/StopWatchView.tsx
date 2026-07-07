@@ -1,8 +1,8 @@
 import { BackButton } from "@/components/timer-action-buttons";
 import Concrete from "@/components/ui/ConcreteButton";
-import { BTCStyles, Color } from "@/styles/BTCIntervalTimer";
+import { BTCStyles, Color, Stage } from "@/styles/BTCIntervalTimer";
 import { useCallback, useRef, useState } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import NotificationContainer from "../Notifications/notification-container";
 import { TimeText } from "../Timer/time-text";
@@ -31,7 +31,7 @@ export function StopwatchView({ onBack }: StopwatchViewProps) {
     };
 
     return (
-        <View style={styles.screen}>
+        <View style={[BTCStyles.appScreen, { paddingHorizontal: 18 }]}>
             <View style={[BTCStyles.toolbar, { paddingLeft: 0 }]}>
                 {onBack && <BackButton onPress={onBack} style={BTCStyles.toolBack} />}
             </View>
@@ -43,21 +43,21 @@ export function StopwatchView({ onBack }: StopwatchViewProps) {
                 />
             </View>
 
-            <View style={[styles.heroBlock, { flex: 1 }]}>
-                <Text style={[BTCStyles.heroLabel, styles.heroLabel, { marginBottom: 8 }]}>ELAPSED TIME</Text>
+            <View style={{ flex: 1, marginTop: 28, marginBottom: 28 }}>
+                <Text style={[BTCStyles.heroLabel, { color: Stage.work.heroLabel, marginBottom: 8 }]}>ELAPSED TIME</Text>
                 <View style={{ justifyContent: 'center', alignContent: 'center', flexGrow: 1 }}>
                     <TimeText
                         isPaused={isPaused}
                         showMilliseconds={true}
                         resetSignal={resetSignal}
                         onTick={handleTick}
-                        style={[BTCStyles.hero, styles.heroValue, { fontSize: 60 }]}
+                        style={[BTCStyles.hero, { color: Stage.work.hero, fontSize: 60 }]}
                     />
                 </View>
             </View>
 
 
-            <View style={styles.actions}>
+            <View style={{gap: 11, marginBottom: 18}}>
                 <Concrete ledge={Color.orangeLedge} onPress={togglePause}>
                     <View style={BTCStyles.start}>
                         <Text style={BTCStyles.startText}>{isPaused ? "▸ START" : "‖ PAUSE"}</Text>
@@ -65,41 +65,12 @@ export function StopwatchView({ onBack }: StopwatchViewProps) {
                 </Concrete>
 
                 <Concrete ledge={Color.navyLedge} onPress={clearTimer}>
-                    <View style={[BTCStyles.stop, styles.stopButton]}>
-                        <Text style={[BTCStyles.stopGlyph, styles.stopColor]}>▪</Text>
-                        <Text style={[BTCStyles.stopText, styles.stopColor]}>STOP / CLEAR</Text>
+                    <View style={[BTCStyles.stop, { backgroundColor: Stage.work.stopBg, borderColor: Stage.work.stopBorder }]}>
+                        <Text style={[BTCStyles.stopGlyph, { color: Stage.work.stopText }]}>▪</Text>
+                        <Text style={[BTCStyles.stopText, { color: Stage.work.stopText }]}>STOP / CLEAR</Text>
                     </View>
                 </Concrete>
             </View>
         </View>
     );
 }
-
-const styles = StyleSheet.create({
-    screen: {
-        flex: 1,
-        backgroundColor: Color.navy,
-        paddingHorizontal: 18,
-    },
-    heroBlock: {
-        marginTop: 28,
-        marginBottom: 28,
-    },
-    heroLabel: {
-        color: '#7e8cb6',
-    },
-    heroValue: {
-        color: Color.white,
-    },
-    actions: {
-        gap: 11,
-        marginBottom: 18,
-    },
-    stopButton: {
-        backgroundColor: '#16213f',
-        borderColor: '#34406a',
-    },
-    stopColor: {
-        color: '#cdd6ec',
-    },
-});

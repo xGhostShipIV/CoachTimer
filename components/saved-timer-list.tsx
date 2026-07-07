@@ -1,6 +1,5 @@
 import { WheelPicker } from "@/components/ui/wheel-picker";
-import { Color, Font } from "@/styles/BTCIntervalTimer";
-import { landingStyles } from "@/styles/navyTheme";
+import { Color, Font, landingStyles } from "@/styles/BTCIntervalTimer";
 import { deleteConfiguration, listSavedConfigurations, SavedConfiguration } from "@/utils/configuration-storage";
 import { useEffect, useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
