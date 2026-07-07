@@ -11,7 +11,11 @@ const SFX_OPTIONS = [NONE_OPTION, ...sfxNames];
 const WARNING_SECONDS_OPTIONS = Array.from({ length: 31 }, (_, i) => i);
 
 function formatSfxLabel(name: string) {
-	return name.toUpperCase().replace(/[_-]/g, ' ');
+	return name
+		.replace(/[_-]/g, ' ')
+		.split(' ')
+		.map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+		.join(' ');
 }
 
 interface SoundOptionsProps {
