@@ -8,6 +8,7 @@ import { useFonts } from 'expo-font';
 import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
+import { requestTrackingPermissionsAsync } from 'expo-tracking-transparency';
 import { useEffect } from 'react';
 import { Keyboard, TouchableWithoutFeedback, View } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
@@ -23,7 +24,15 @@ export const unstable_settings = {
 
 SplashScreen.preventAutoHideAsync();
 
-mobileAds().initialize();
+// iOS requires the App Tracking Transparency prompt to be answered before the
+// IDFA is read, so request it first, then initialize the ad SDK. On Android
+// (and if the user denies) this is a no-op / non-personalized ads still serve.
+// Runs once on mount rather than at module load so the ATT prompt appears after
+// the app UI is presented, which iOS requires for the dialog to show.
+async function initializeAds() {
+  await requestTrackingPermissionsAsync();
+  await mobileAds().initialize();
+}
 
 // Every screen in this app is hardcoded to the BTC navy theme regardless of
 // system light/dark mode, so the navigator's own background (visible behind
@@ -49,6 +58,10 @@ export default function RootLayout() {
   });
 
   const [logoAsset, assetError] = useAssets([require('@/assets/images/btc-logo.png'), ...NOTIFICATION_URLS]);
+
+  useEffect(() => {
+    initializeAds();
+  }, []);
 
   useEffect(() => {
     if ((fontsLoaded || fontError) && (logoAsset || assetError)) {

@@ -12,7 +12,10 @@
       }
     },
     "preview": {
-      "distribution": "internal"
+      "distribution": "internal",
+      "ios": {
+        "distribution": "store"
+      }
     },
     "production": {
       "autoIncrement": true

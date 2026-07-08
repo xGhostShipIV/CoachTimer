@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "IntervalTimer",
+    "name": "BTC Interval Timer",
     "slug": "IntervalTimer",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -15,9 +15,8 @@
     "android": {
       "package": "com.btcworkout.intervaltimer",
       "adaptiveIcon": {
-        "backgroundColor": "#E6F4FE",
+        "backgroundColor": "#6A3DE8",
         "foregroundImage": "./assets/images/android-icon-foreground.png",
-        "backgroundImage": "./assets/images/android-icon-background.png",
         "monochromeImage": "./assets/images/android-icon-monochrome.png"
       },
       "edgeToEdgeEnabled": true,
@@ -54,8 +53,7 @@
         "react-native-google-mobile-ads",
         {
           "androidAppId": "ca-app-pub-3940256099942544~3347511713",
-          "iosAppId": "ca-app-pub-3940256099942544~1458002511",
-          "userTrackingUsageDescription": "This identifier will be used to deliver personalized ads to you."
+          "iosAppId": "ca-app-pub-3940256099942544~1458002511"
         }
       ],
       [
@@ -64,6 +62,12 @@
           "android": {
             "kotlinVersion": "2.3.0"
           }
+        }
+      ],
+      [
+        "expo-tracking-transparency",
+        {
+          "userTrackingPermission": "This identifier will be used to deliver personalized ads to you."
         }
       ]
     ],
