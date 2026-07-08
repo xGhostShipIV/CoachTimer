@@ -76,26 +76,29 @@ export default function IntervalSetupView({ initialConfiguration, initialConfigN
                             onChange={(next) => updateConfig({ intervals: next })}
                         />
                     </View>
-
-                    <View style={[BTCStyles.totalBox, localStyles.section]}>
-                        <Text style={BTCStyles.totalLabel}>TOTAL{"\n"}TIME</Text>
-                        <Text style={BTCStyles.totalValue}>{formatTimestamp(calculateTotalConfigurationTime(configuration), false)}</Text>
-                    </View>
-
-                    <Concrete
-                        ledge={Color.orangeLedge}
-                        onPress={() => {
-                            if (loadedConfigName) {
-                                recordConfigurationUsage(loadedConfigName).catch(() => { });
-                            }
-                            onStart?.(configuration, loadedConfigName);
-                        }}
-                    >
-                        <View style={BTCStyles.start}>
-                            <Text style={BTCStyles.startText}>▸ START</Text>
-                        </View>
-                    </Concrete>
                 </ScrollView>
+
+                <View style={localStyles.footer}>
+                    <View style={[BTCStyles.totalBox, localStyles.footerTotal]}>
+                        <Text style={BTCStyles.totalLabel}>TOTAL TIME</Text>
+                        <Text style={[BTCStyles.totalValue, localStyles.footerTotalValue]}>{formatTimestamp(calculateTotalConfigurationTime(configuration), false)}</Text>
+                    </View>
+                    <View style={localStyles.footerStart}>
+                        <Concrete
+                            ledge={Color.orangeLedge}
+                            onPress={() => {
+                                if (loadedConfigName) {
+                                    recordConfigurationUsage(loadedConfigName).catch(() => { });
+                                }
+                                onStart?.(configuration, loadedConfigName);
+                            }}
+                        >
+                            <View style={BTCStyles.start}>
+                                <Text style={BTCStyles.startText}>▸ START</Text>
+                            </View>
+                        </Concrete>
+                    </View>
+                </View>
             </View>
         </>
     );
@@ -104,5 +107,26 @@ export default function IntervalSetupView({ initialConfiguration, initialConfigN
 const localStyles = StyleSheet.create({
     section: {
         marginBottom: 16,
+    },
+    footer: {
+        flexDirection: "row",
+        alignItems: "flex-start",
+        gap: 12,
+        marginTop: 8,
+    },
+    // Compact variant of totalBox: stacks label over value and matches the
+    // START face height so the pair reads as one footer row.
+    footerTotal: {
+        flexDirection: "column",
+        alignItems: "flex-start",
+        justifyContent: "center",
+        height: 62,
+        paddingVertical: 0,
+    },
+    footerTotalValue: {
+        fontSize: 26,
+    },
+    footerStart: {
+        flex: 1,
     },
 });
