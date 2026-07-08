@@ -1,5 +1,6 @@
 import { useScreenBackground } from "@/components/screen-frame";
 import Concrete from "@/components/ui/ConcreteButton";
+import StableTimeText from "@/components/ui/stable-time-text";
 import { TimeConfiguration } from "@/data/data-types";
 import { BTCStyles, Stage } from "@/styles/BTCIntervalTimer";
 import { formatMinutesSeconds } from "@/utils/time-utils";
@@ -65,9 +66,10 @@ export default function IntervalActiveTimer({ data, onFinish, onStop }: ActiveTi
                 <Text style={[BTCStyles.heroLabel, { color: palette.heroLabel }]}>
                     {isRoundRest ? "ROUND REST" : "ROUND REMAINING"}
                 </Text>
-                <Text style={[BTCStyles.hero, { color: palette.hero }]}>
-                    {formatMinutesSeconds(timeRemainingMS ?? 0)}
-                </Text>
+                <StableTimeText
+                    text={formatMinutesSeconds(timeRemainingMS ?? 0)}
+                    style={[BTCStyles.hero, { color: palette.hero }]}
+                />
             </View>
 
             <View style={[BTCStyles.phaseStrip, { backgroundColor: palette.stripBg }]}>

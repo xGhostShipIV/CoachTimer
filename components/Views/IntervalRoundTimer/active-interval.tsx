@@ -1,3 +1,4 @@
+import StableTimeText from "@/components/ui/stable-time-text";
 import { BTCStyles, Color, SegmentTone } from "@/styles/BTCIntervalTimer";
 import { formatMinutesSeconds } from "@/utils/time-utils";
 import { StyleSheet, Text, View } from "react-native";
@@ -80,9 +81,10 @@ function Segment({ label, timeMs, isActive, tag, progress, progressFillColor, ac
                 {tag && <Text style={[BTCStyles.segTag, { color: SegmentTone.idleTag }]}>{tag}</Text>}
             </View>
 
-            <Text style={[BTCStyles.segTime, { color: textColor, fontSize: isActive ? 42 : 24 }]}>
-                {formatMinutesSeconds(timeMs)}
-            </Text>
+            <StableTimeText
+                text={formatMinutesSeconds(timeMs)}
+                style={[BTCStyles.segTime, { color: textColor, fontSize: isActive ? 42 : 24 }]}
+            />
 
             {isActive && progress !== undefined && (
                 <View style={BTCStyles.progressTrack}>

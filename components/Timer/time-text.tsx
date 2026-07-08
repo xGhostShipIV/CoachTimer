@@ -1,6 +1,7 @@
+import StableTimeText from "@/components/ui/stable-time-text";
 import { formatTimestamp } from "@/utils/time-utils";
 import { useEffect, useRef, useState } from "react";
-import { StyleProp, Text, TextStyle } from "react-native";
+import { StyleProp, TextStyle } from "react-native";
 import { styles } from "./time-keeper-styles";
 
 interface TimeTextProps {
@@ -107,8 +108,9 @@ export function TimeText({
     }, [resetSignal, countdownFrom, onTick]);
 
     return (
-        <Text style={style ?? styles.timerText}>
-            {formatTimestamp(elapsedTime, showMilliseconds)}
-        </Text>
+        <StableTimeText
+            text={formatTimestamp(elapsedTime, showMilliseconds)}
+            style={style ?? styles.timerText}
+        />
     );
 }
