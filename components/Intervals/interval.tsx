@@ -20,11 +20,12 @@ function MiniField({ label, displayValue, onPress }: { label: string; displayVal
 interface IntervalItemProps {
     index: number;
     data: IntervalData;
+    disabled?: boolean;
     onRemove: (index: number) => void;
     onUpdate: (index: number, updatedData: IntervalData) => void;
 }
 
-function IntervalItem({ index, data, onRemove, onUpdate }: IntervalItemProps) {
+function IntervalItem({ index, data, disabled, onRemove, onUpdate }: IntervalItemProps) {
     const updateField = <K extends keyof IntervalData>(field: K, value: IntervalData[K]) => {
         onUpdate(index, { ...data, [field]: value });
     };
@@ -36,7 +37,7 @@ function IntervalItem({ index, data, onRemove, onUpdate }: IntervalItemProps) {
                     <Text style={BTCStyles.intervalBadgeText}>{index + 1}</Text>
                 </View>
                 <Text style={BTCStyles.intervalCardTitle}>INTERVAL</Text>
-                <Pressable style={BTCStyles.intervalClose} onPress={() => onRemove(index)} hitSlop={8}>
+                <Pressable style={BTCStyles.intervalClose} disabled={disabled} onPress={() => onRemove(index)} hitSlop={8}>
                     <Text style={BTCStyles.intervalCloseGlyph}>×</Text>
                 </Pressable>
             </View>
@@ -116,6 +117,7 @@ export default function IntervalContainer({ data, onChange }: IntervalContainerP
                     key={index}
                     index={index}
                     data={interval}
+                    disabled={data.length === 1}
                     onRemove={handleRemove}
                     onUpdate={handleUpdate}
                 />
