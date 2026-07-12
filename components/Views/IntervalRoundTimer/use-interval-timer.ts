@@ -65,10 +65,15 @@ export function useIntervalTimer(data: TimeConfiguration) {
     const frameRef = useRef<number | null>(null);
     const previousTimeRef = useRef<number | null>(null);
 
-    const playSound = (soundName: string | undefined) => {
+    // Returns whether a sound actually played, so callers can tell "a round
+    // sfx took this slot" apart from "the round sfx was empty" — only the
+    // former should suppress the overlapping interval sfx.
+    const playSound = (soundName: string | undefined): boolean => {
         if (soundName) {
             soundManager(soundName);
+            return true;
         }
+        return false;
     };
 
     // Plays an interval's own start/end/warning sfx on phase transitions and
@@ -83,6 +88,12 @@ export function useIntervalTimer(data: TimeConfiguration) {
 
             if (suppressNextIntervalStart.current) {
                 suppressNextIntervalStart.current = false;
+                // The round-start sfx (fired separately) only owns this slot if
+                // it actually exists; when the round has no start sound, let the
+                // interval's own start sfx play instead of silencing it.
+                if (!data.soundConfiguration?.roundStartSfx) {
+                    playSound(soundConfig?.roundStartSfx);
+                }
             } else if (!roundSoundFiredThisFrame) {
                 playSound(soundConfig?.roundStartSfx);
             }
@@ -204,8 +215,13 @@ export function useIntervalTimer(data: TimeConfiguration) {
         }
 
         if (!current) {
-            // All repeats of all intervals for this round are complete.
-            playSound(data.soundConfiguration?.roundEndSfx);
+            // All repeats of all intervals for this round are complete. The
+            // round-end sfx owns this boundary, but if it's empty fall back to
+            // the last interval's own end sfx so a set interval sound still plays.
+            if (!playSound(data.soundConfiguration?.roundEndSfx)) {
+                const lastInterval = getIntervalAtIndex(totalRepeats.current - 1);
+                playSound(lastInterval?.soundConfiguration?.roundEndSfx);
+            }
 
             setTimerState((previous) => {
                 if (!previous) return undefined;
@@ -241,8 +257,9 @@ export function useIntervalTimer(data: TimeConfiguration) {
             const roundWarningMs = data.soundConfiguration?.roundEndWarningMs;
             if (roundWarningMs !== undefined && newTimeRemaining <= roundWarningMs && !hasPlayedRoundEndWarning.current) {
                 hasPlayedRoundEndWarning.current = true;
-                roundSoundFiredThisFrame = true;
-                playSound(data.soundConfiguration?.roundEndWarningSfx);
+                // Only claim the slot (suppressing the interval warning) when a
+                // round warning sfx actually played.
+                roundSoundFiredThisFrame = playSound(data.soundConfiguration?.roundEndWarningSfx);
             }
 
             return {

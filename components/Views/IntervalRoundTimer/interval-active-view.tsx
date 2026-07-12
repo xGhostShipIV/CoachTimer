@@ -4,6 +4,7 @@ import StableTimeText from "@/components/ui/stable-time-text";
 import { TimeConfiguration } from "@/data/data-types";
 import { BTCStyles, Stage } from "@/styles/BTCIntervalTimer";
 import { formatMinutesSeconds } from "@/utils/time-utils";
+import { useKeepAwake } from "expo-keep-awake";
 import { useEffect } from "react";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -31,6 +32,9 @@ function paletteFor(stage: ReturnType<typeof useIntervalTimer>["currentStage"]) 
 }
 
 export default function IntervalActiveTimer({ data, onFinish, onStop }: ActiveTimerProps) {
+    // Hold a wake lock for as long as the active timer view is mounted;
+    // released automatically on unmount (finish / stop / navigate away).
+    useKeepAwake();
     const insets = useSafeAreaInsets();
     const { currentStage, currentRoundCount, timeRemainingMS, intervalPreview } = useIntervalTimer(data);
 
