@@ -21,10 +21,6 @@ function pad2(value: number) {
     return String(value).padStart(2, "0");
 }
 
-// Engine stage -> BTCStyles palette key. "on" reads white-hot ("work"),
-// "off" reads in the strike accent ("recover"); "finished" reuses the
-// roundRest tone (darkest dim) since the screen holds on this stage briefly
-// before handing off to the summary screen. Undefined also falls back here.
 function paletteFor(stage: ReturnType<typeof useIntervalTimer>["currentStage"]) {
     if (stage === "off") return Stage.recover;
     if (stage === "roundRest" || stage === "finished") return Stage.roundRest;
@@ -32,8 +28,6 @@ function paletteFor(stage: ReturnType<typeof useIntervalTimer>["currentStage"]) 
 }
 
 export default function IntervalActiveTimer({ data, onFinish, onStop }: ActiveTimerProps) {
-    // Hold a wake lock for as long as the active timer view is mounted;
-    // released automatically on unmount (finish / stop / navigate away).
     useKeepAwake();
     const insets = useSafeAreaInsets();
     const { currentStage, currentRoundCount, timeRemainingMS, intervalPreview } = useIntervalTimer(data);
@@ -52,10 +46,6 @@ export default function IntervalActiveTimer({ data, onFinish, onStop }: ActiveTi
     const noRest = activePhase === "on" && intervalPreview[0]?.offTotalMs === 0;
     const roundCount = currentRoundCount ?? 1;
 
-    // The stage tint should cover the entire screen (including behind the
-    // status bar), not just this view's own content box — ScreenFrame owns
-    // that area, so hand the color up to it instead of only painting our
-    // own root.
     useScreenBackground(palette.screen);
 
     return (

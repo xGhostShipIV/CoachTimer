@@ -1,9 +1,9 @@
 import { BackButton } from "@/components/timer-action-buttons";
 import Concrete from "@/components/ui/ConcreteButton";
 import { BTCStyles, Color, Stage } from "@/styles/BTCIntervalTimer";
+import { useKeepAwake } from "expo-keep-awake";
 import { useCallback, useRef, useState } from "react";
 import { Text, View } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 import NotificationContainer from "../Notifications/notification-container";
 import { TimeText } from "../Timer/time-text";
 
@@ -12,7 +12,8 @@ interface StopwatchViewProps {
 }
 
 export function StopwatchView({ onBack }: StopwatchViewProps) {
-    const insets = useSafeAreaInsets();
+    useKeepAwake();
+    
     const [isPaused, setIsPaused] = useState(true);
     const [resetSignal, setResetSignal] = useState(0);
     const notificationTickRef = useRef<(delta: number) => void>(() => { });
