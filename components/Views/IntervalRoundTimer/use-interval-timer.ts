@@ -51,6 +51,10 @@ export function useIntervalTimer(data: TimeConfiguration) {
     // Tracks the on/off phase of the currently active interval entry so its
     // own start/end sfx fire once per transition (i.e. once per repeat).
     const previousIntervalPhase = useRef<"on" | "off" | undefined>(undefined);
+    // Tracks which global repeat index last played its sounds. When off === 0
+    // the phase stays "on" across a repeat boundary, so the phase alone can't
+    // tell one repeat's start from the next; the index change is what marks it.
+    const previousRepeatIndex = useRef<number>(-1);
     const hasPlayedIntervalOnWarning = useRef<boolean>(false);
     const hasPlayedIntervalOffWarning = useRef<boolean>(false);
     // The round's own start sfx always coincides with the first interval's
@@ -82,8 +86,16 @@ export function useIntervalTimer(data: TimeConfiguration) {
     const playIntervalPhaseSounds = (interval: IntervalData, phase: "on" | "off", roundSoundFiredThisFrame: boolean) => {
         const soundConfig = interval.soundConfiguration;
         const enteringPhase = previousIntervalPhase.current !== phase;
+        const newRepeat = previousRepeatIndex.current !== currentIntervalIndex.current;
 
-        if (phase === "on" && enteringPhase) {
+        // A repeat's start is entering "on" either from another phase (off > 0)
+        // or via the repeat index advancing while the phase stays "on"
+        // (off === 0, where the previous repeat's end and this one's start
+        // collapse onto the same boundary — the start takes priority and the
+        // end is skipped, so only one sound ever plays there).
+        const enteringOn = phase === "on" && (enteringPhase || newRepeat);
+
+        if (enteringOn) {
             hasPlayedIntervalOnWarning.current = false;
 
             if (suppressNextIntervalStart.current) {
@@ -128,6 +140,7 @@ export function useIntervalTimer(data: TimeConfiguration) {
         }
 
         previousIntervalPhase.current = phase;
+        previousRepeatIndex.current = currentIntervalIndex.current;
     };
 
     // Flattens intervals into steps keyed by the global repeat index at which
@@ -184,6 +197,7 @@ export function useIntervalTimer(data: TimeConfiguration) {
             currentIntervalIndex.current = 0;
             timeInInterval.current = 0;
             previousIntervalPhase.current = undefined;
+            previousRepeatIndex.current = -1;
             suppressNextIntervalStart.current = true;
 
             playSound(data.soundConfiguration?.roundStartSfx);
