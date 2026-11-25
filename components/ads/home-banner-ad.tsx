@@ -1,10 +1,9 @@
 import { StyleSheet, View } from "react-native";
-import { BannerAd, BannerAdSize, TestIds } from "react-native-google-mobile-ads";
+import { BannerAd, BannerAdSize } from "react-native-google-mobile-ads";
 
-// Swap to a real ad unit ID from your AdMob account before shipping —
-// TestIds.BANNER always serves Google's sample test creative, regardless of
-// platform, and is safe to leave wired in during development.
-const BANNER_AD_UNIT_ID = TestIds.BANNER;
+// const BANNER_AD_UNIT_ID = TestIds.BANNER;
+const BANNER_AD_UNIT_ID = "ca-app-pub-4319721445473335/6886007279";
+
 
 export default function HomeBannerAd() {
     return (

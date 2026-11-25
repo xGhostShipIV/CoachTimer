@@ -1,5 +1,5 @@
 import { landingStyles } from "@/styles/BTCIntervalTimer";
-import { Linking, Pressable, Text, View } from "react-native";
+import { Linking, Pressable, Text } from "react-native";
 
 interface LinkProps {
     url: string;
@@ -8,15 +8,14 @@ interface LinkProps {
 
 export default function Link({ url, text }: LinkProps) {
     return (
-        <View style={landingStyles.footer}>
-            <Pressable onPress={() => Linking.openURL(url)}>
-                <Text style={landingStyles.footerUrl}>
-                    {
-                        text != undefined ?
-                            text : url
-                    }
-                </Text>
-            </Pressable>
-        </View>
+        <Pressable
+            accessibilityRole="link"
+            hitSlop={8}
+            onPress={() => Linking.openURL(url)}
+        >
+            <Text style={landingStyles.footerUrl}>
+                {text ?? url}
+            </Text>
+        </Pressable>
     )
 }

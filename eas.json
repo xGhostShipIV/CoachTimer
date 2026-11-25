@@ -14,7 +14,7 @@
     "preview": {
       "distribution": "internal",
       "ios": {
-        "distribution": "store"
+        "distribution": "internal"
       }
     },
     "production": {

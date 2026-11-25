@@ -67,10 +67,20 @@ export default function LandingScreen({ setActiveView, loadedPreset, setLoadedPr
                     refreshSignal={savedListVersion}
                 />
 
-                <Link
-                    url="https://www.btcworkout.com/"
-                    text="btcworkout.com"
-                />
+                <View style={landingStyles.footer}>
+                    <Link
+                        url="https://www.btcworkout.com/"
+                        text="btcworkout.com"
+                    />
+                    <Link
+                        url="https://xghostshipiv.github.io/BTCIntervalTimer-Support/"
+                        text="Support"
+                    />
+                    <Link
+                        url="https://xghostshipiv.github.io/BTCIntervalTimer-Support/privacy.html"
+                        text="Privacy Policy"
+                    />
+                </View>
             </ScrollView>
         </>
     )

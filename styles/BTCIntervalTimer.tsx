@@ -370,8 +370,8 @@ export const landingStyles = StyleSheet.create({
   presetFadeBot: { position: 'absolute', left: 0, right: 0, bottom: 0, height: 28 },
 
   // footer
-  footer: { marginTop: 'auto', paddingHorizontal: 18, paddingTop: 20, paddingBottom: 16 },
-  footerUrl: { fontFamily: Font.oswaldMed, fontSize: 13, letterSpacing: 1.5, color: '#6f7da8', textAlign: 'center', textTransform: 'uppercase', marginBottom: 12, textDecorationLine: 'underline' },
+  footer: { marginTop: 'auto', paddingHorizontal: 18, paddingTop: 20, paddingBottom: 28, flexDirection: 'row', justifyContent: 'center', flexWrap: 'wrap', gap: 20 },
+  footerUrl: { fontFamily: Font.oswaldMed, fontSize: 13, letterSpacing: 1.5, color: '#6f7da8', textAlign: 'center', textTransform: 'uppercase', textDecorationLine: 'underline' },
   bannerAd: { height: 52, borderWidth: 1, borderColor: '#3a4f80', borderStyle: 'dashed', borderRadius: 4, alignItems: 'center', justifyContent: 'center' },
   bannerAdText: { fontFamily: Font.mono, fontSize: 10, color: '#5469a0' },
 });
